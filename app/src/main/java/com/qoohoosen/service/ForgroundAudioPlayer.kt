@@ -21,6 +21,7 @@ class ForgroundAudioPlayer : Service() {
     private var iconNotification: Bitmap? = null
     private var notification: Notification? = null
     var mNotificationManager: NotificationManager? = null
+    private var player: MediaPlayer? = null
 
     override fun onBind(intent: Intent?): IBinder? {
         return null
@@ -116,7 +117,14 @@ class ForgroundAudioPlayer : Service() {
 
     }
 
-    private var player: MediaPlayer? = null
+    override fun onDestroy() {
+        super.onDestroy()
+        player!!.release()
+        player = null
+        stopForeground(true)
+        stopSelf()
+    }
+
 
     @Synchronized
     fun playTinyMusic(context: Context?, path: String?) {
