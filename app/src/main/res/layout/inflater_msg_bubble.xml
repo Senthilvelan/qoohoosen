@@ -75,7 +75,7 @@
             android:layout_height="64dp"
             android:layout_below="@+id/textViewDescription"
             android:layout_marginTop="40dp"
-            android:visibility="visible" />
+            android:visibility="gone" />
 
         <!--        <com.github.scrobot.audiovisualizer.SoundVisualizerBarView
                     android:id="@+id/vWaveView"
