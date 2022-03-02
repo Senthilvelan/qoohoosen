@@ -6,7 +6,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
-import android.view.View;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
@@ -28,14 +27,9 @@ public class PermissionActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_permission);
         TextView mAllowButton = findViewById(R.id.allow_button);
+        permissionChecking();
 
-        mAllowButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                permissionChecking();
-            }
-        });
-
+        mAllowButton.setOnClickListener(v -> permissionChecking());
 
     }
 
@@ -63,8 +57,8 @@ public class PermissionActivity extends AppCompatActivity {
                     @Override
                     public void onPermissionRationaleShouldBeShown(PermissionRequest permission,
                                                                    PermissionToken token) {
-                        // token.continuePermissionRequest();
-                        permissionChecking();
+                        token.continuePermissionRequest();
+//                        permissionChecking();
                     }
                 }).check();
     }
