@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">QooHooSenthil</string>
+
+    <string name="slide_to_cancel">"Slide to cancel"</string>
+    <string name="type_a_message">Message</string>
+
+    <bool name="is_right_to_left">false</bool>
+</resources>
