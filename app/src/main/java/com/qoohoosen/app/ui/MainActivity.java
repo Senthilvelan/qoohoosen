@@ -1,8 +1,8 @@
 package com.qoohoosen.app.ui;
 
 import static androidx.core.content.PermissionChecker.PERMISSION_GRANTED;
+import static com.qoohoosen.utils.Constable.FILE_EXT;
 import static com.qoohoosen.utils.Constable.FREQUENCY;
-import static com.qoohoosen.utils.Constable.INTENT_PATH_AUDIO;
 import static com.qoohoosen.utils.Constable.MIN_RECORD_TIME_THRESHOLD;
 import static com.qoohoosen.utils.Constable.RECORD_CANCEL;
 import static com.qoohoosen.utils.Constable.RECORD_COMPLETED;
@@ -10,7 +10,6 @@ import static com.qoohoosen.utils.Constable.RECORD_START;
 import static com.qoohoosen.utils.Constable.TIMER_1000;
 
 import android.Manifest;
-import android.content.Intent;
 import android.media.AudioFormat;
 import android.media.MediaRecorder;
 import android.os.Build;
@@ -38,7 +37,6 @@ import com.qoohoosen.recorder.OmRecorder;
 import com.qoohoosen.recorder.PullTransport;
 import com.qoohoosen.recorder.PullableSource;
 import com.qoohoosen.recorder.Recorder;
-import com.qoohoosen.service.ForgroundAudioPlayer;
 import com.qoohoosen.utils.AudioTinyPlayer;
 import com.qoohoosen.widget.BottomTextRecordView;
 
@@ -62,6 +60,7 @@ public class MainActivity extends AppCompatActivity implements
     //vars
     private long time;
     private Recorder recorder;
+    private static String onGoingFile;
 
 
     @Override
@@ -72,8 +71,8 @@ public class MainActivity extends AppCompatActivity implements
         Toolbar toolbarHome = findViewById(R.id.toolbarHome);
         setSupportActionBar(toolbarHome);
 
-        startService(new Intent(this, ForgroundAudioPlayer.class)
-                .putExtra(INTENT_PATH_AUDIO, ""));
+//        startService(new Intent(this, ForgroundAudioPlayer.class)
+//                .putExtra(INTENT_PATH_AUDIO, ""));
 
 //        setupNoiseRecorder();
         startInitRecorder();
@@ -90,10 +89,12 @@ public class MainActivity extends AppCompatActivity implements
 
         setUpRecycler();
 
-        // bottomTextRecordView.getMessageView().requestFocus();
+        //focus on mic
+//        bottomTextRecordView.getMessageView().requestFocus();
         bottomTextRecordView.setRecordingListener(this);
         bottomTextRecordView.setRecordPermissionHandler(this);
 
+        getListOfFiles();
     }
 
 
@@ -107,7 +108,7 @@ public class MainActivity extends AppCompatActivity implements
 
 
     private void attachAdapter() {
-        msgBubbleAdapter = new MsgBubbleAdapter();
+        msgBubbleAdapter = new MsgBubbleAdapter(MainActivity.this);
         recyclerViewMsgBubble.setAdapter(msgBubbleAdapter);
     }
 
@@ -116,9 +117,15 @@ public class MainActivity extends AppCompatActivity implements
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M)
             return true;
 
-        boolean recordPermissionAvailable = ContextCompat
-                .checkSelfPermission(MainActivity.this, Manifest.permission.RECORD_AUDIO)
-                == PERMISSION_GRANTED;
+        boolean recordPermissionAvailable = false;
+        try {
+            recordPermissionAvailable = ContextCompat
+                    .checkSelfPermission(MainActivity.this, Manifest.permission.RECORD_AUDIO)
+                    == PERMISSION_GRANTED;
+        } catch (Exception e) {
+            debug(e.toString());
+        }
+
 
         if (recordPermissionAvailable)
             return true;
@@ -133,10 +140,15 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onRecordingStarted() {
+
+        if (!isPermissionGranted()) {
+            return;
+        }
         showToast("started");
         debug("started");
-
-        if (recorder != null) {
+        if (recorder == null) {
+            startInitRecorder();
+        } else {
             AudioTinyPlayer.getAudioTinyPlayerInstance()
                     .playTinyMusic(MainActivity.this, RECORD_START);
             recorder.startRecording();
@@ -153,12 +165,16 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onRecordingCompleted() {
+        if (!isPermissionGranted()) {
+            return;
+        }
         debug("completed");
 
         int recordTime = (int) ((System.currentTimeMillis() / (TIMER_1000)) - time);
 
         if (recordTime > MIN_RECORD_TIME_THRESHOLD)
-            msgBubbleAdapter.add(new MsgBubble(recordTime));
+            msgBubbleAdapter.add(new MsgBubble(msgBubbleAdapter.getItemCount() + 1,
+                    recordTime, onGoingFile));
 
 
         try {
@@ -191,11 +207,15 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     private void startInitRecorder() {
+        if (!isPermissionGranted())
+            return;
+
         recorder = OmRecorder.wav(
                 new PullTransport.Default(mic(),
                         audioChunk -> animateVoice((float) (audioChunk.maxAmplitude() / 200.0))),
                 file());
     }
+
 
 //    private void setupNoiseRecorder() {
 //        recorder = OmRecorder.wav(
@@ -220,7 +240,8 @@ public class MainActivity extends AppCompatActivity implements
 //    }
 
     private void animateVoice(final float maxPeak) {
-//        recordButton.animate().scaleX(1 + maxPeak).scaleY(1 + maxPeak).setDuration(10).start();
+        if (bottomTextRecordView != null)
+            bottomTextRecordView.animateRecordButton(maxPeak);
     }
 
     private PullableSource mic() {
@@ -234,14 +255,31 @@ public class MainActivity extends AppCompatActivity implements
 
     @NonNull
     private File file() {
+        File file = new File(getFilesDir(), UUID.randomUUID().toString() + FILE_EXT);
 //        return new File(Environment.getExternalStorageDirectory()
 //                + "/qoohoo",
-//                UUID.randomUUID().toString()
-//                        + ".wav");
-        return new File(getFilesDir(),
-                UUID.randomUUID().toString() + ".wav");
-
+//                onGoingFile);
+        onGoingFile = file.getAbsolutePath().toString();
+        return file;
     }
+
+
+    private void getListOfFiles() {
+        File[] dirFiles = getFilesDir().listFiles();
+        if (dirFiles != null && dirFiles.length != 0) {
+            int index = 1;
+            for (File dirFile : dirFiles) {
+                String fileOutput = dirFile.toString();
+                if (!fileOutput.isEmpty()) {
+                    MsgBubble msgBubble = new MsgBubble(index, dirFiles.length, fileOutput);
+                    msgBubbleAdapter.add(msgBubble);
+                    index++;
+                }//eof if
+            }//eof for
+        }//eof if
+
+
+    }//eof getListOfFiles
 
     private synchronized void showToast(String message) {
         Toast toast = Toast.makeText(this, message, Toast.LENGTH_SHORT);

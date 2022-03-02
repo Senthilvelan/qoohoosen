@@ -60,9 +60,13 @@ public interface PullTransport {
 
         @Override
         public void stop() {
-            pullableSource.isEnableToBePulled(false);
-            pullableSource.audioRecord().stop();
-            pullableSource.audioRecord().release();
+            if (pullableSource != null)
+                pullableSource.isEnableToBePulled(false);
+            if (pullableSource.audioRecord() != null) {
+                pullableSource.audioRecord().stop();
+                pullableSource.audioRecord().release();
+            }
+
         }
 
         public PullableSource pullableSource() {

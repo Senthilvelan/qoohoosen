@@ -18,6 +18,8 @@ public interface Constable {
     String ACTION_STOP_FOREGROUND = "com.qoohoo.app.stop_audio";
     String INTENT_PATH_AUDIO = "path_audio";
 
+    String FILE_EXT = ".wav";
+
 
     int NOTI_ID = 123;
     String NOTI_CHANNEL_GROUP_ID = "qoohoo_group_audio";

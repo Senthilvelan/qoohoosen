@@ -1,5 +1,9 @@
 package com.qoohoosen.app.ui.adapter;
 
+import static com.qoohoosen.utils.Constable.INTENT_PATH_AUDIO;
+
+import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.qoohoosen.app.R;
 import com.qoohoosen.app.ui.adapter.pojo.MsgBubble;
-import com.qoohoosen.audiowave.AudioWaveView;
+import com.qoohoosen.service.ForgroundAudioPlayer;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -26,8 +30,12 @@ public class MsgBubbleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     private final List<MsgBubble> msgBubbleArrayList = new ArrayList<>();
     private static SimpleDateFormat timeFormatter;
+    private Context context;
+    private static String contentPlaying = "";
 
-    public MsgBubbleAdapter() {
+
+    public MsgBubbleAdapter(Context context) {
+        this.context = context;
         timeFormatter = new SimpleDateFormat("m:ss", Locale.getDefault());
     }
 
@@ -64,33 +72,55 @@ public class MsgBubbleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     public class MessageViewHolder extends RecyclerView.ViewHolder {
 
-        public TextView text;
-        public AudioWaveView wave;
+        public TextView textViewTitle;
+        public TextView textViewDescription;
+        //        public AudioWaveView wave;
         ImageView audio_button_play;
 
 
         public MessageViewHolder(View view) {
             super(view);
-            text = itemView.findViewById(R.id.textView);
+            textViewTitle = itemView.findViewById(R.id.textViewTitle);
+            textViewDescription = itemView.findViewById(R.id.textViewDescription);
 //            wave = itemView.findViewById(R.id.audio_wave);
             audio_button_play = itemView.findViewById(R.id.audio_button_play);
 
         }
 
         public void bind(final MsgBubble message) {
+
             if (message.type == MsgBubble.TYPE_AUDIO) {
-                text.setCompoundDrawablesWithIntrinsicBounds(R.drawable.mic_small,
-                        0, 0, 0);
-                text.setText(String.valueOf(getAudioTime(message.time)));
+//                textViewTitle.setCompoundDrawablesWithIntrinsicBounds(R.drawable.mic_small,
+//                        0, 0, 0);
+                textViewTitle.setText(String.valueOf(message.index));
+                textViewDescription.setText(message.path);
 
             } else if (message.type == MsgBubble.TYPE_TEXT) {
-                text.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
-                text.setText(message.text);
+//                textViewDescription.setCompoundDrawablesWithIntrinsicBounds(0, 0,
+//                        0, 0);
+                textViewDescription.setText(message.text);
 
             } else {
-                text.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
-                text.setText("");
+//                textViewDescription.setCompoundDrawablesWithIntrinsicBounds(0, 0,
+//                        0, 0);
+                textViewDescription.setText("");
             }
+
+            audio_button_play.setOnClickListener(v -> {
+
+                if (contentPlaying.length() <= 0) {
+                    contentPlaying = message.path;
+                    audio_button_play.setImageResource(android.R.drawable.ic_media_pause);
+                    context.startService(new Intent(context, ForgroundAudioPlayer.class)
+                            .putExtra(INTENT_PATH_AUDIO, contentPlaying));
+                } else {
+                    contentPlaying = "";
+                    audio_button_play.setImageResource(android.R.drawable.ic_media_play);
+                    context.stopService(new Intent(context, ForgroundAudioPlayer.class));
+                }
+
+
+            });
 
 //            wave.setScaledData(new byte[0]);
 //            wave.setProgress(0);

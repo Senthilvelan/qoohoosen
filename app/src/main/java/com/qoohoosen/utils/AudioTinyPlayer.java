@@ -10,7 +10,7 @@ public class AudioTinyPlayer {
 
     public static AudioTinyPlayer audioTinyPlayerInstance;
 
-    MediaPlayer player;
+    private MediaPlayer player;
 
     public static AudioTinyPlayer getAudioTinyPlayerInstance() {
         if (audioTinyPlayerInstance == null)
@@ -40,6 +40,14 @@ public class AudioTinyPlayer {
                 mp = null;
                 player = null;
             });
+
+            player.setOnErrorListener((mp, what, extra) -> {
+                mp.release();
+                mp = null;
+                player = null;
+                return false;
+            });
+
             player.setLooping(false);
         } catch (IOException e) {
             e.printStackTrace();

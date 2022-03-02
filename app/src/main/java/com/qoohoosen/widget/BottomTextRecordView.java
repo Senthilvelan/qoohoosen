@@ -256,8 +256,8 @@ public class BottomTextRecordView {
             if (isDeleting)
                 return true;
 
-            if (!isRecordPermissionGranted())
-                return true;
+//            if (!isRecordPermissionGranted())
+//                return true;
 
             Utilities.hideKeyPad(context, imageViewAudio);
 
@@ -404,6 +404,9 @@ public class BottomTextRecordView {
 
     private void stopRecording(RecordingBehaviour recordingBehaviour) {
 
+//        if (!isRecordPermissionGranted())
+//            return;
+
         stopTrackingAction = true;
         firstX = 0;
         firstY = 0;
@@ -469,6 +472,10 @@ public class BottomTextRecordView {
     }
 
     private void startRecord() {
+//        if (!isRecordPermissionGranted())
+//            return;
+
+
         if (recordingListener != null)
             recordingListener.onRecordingStarted();
 
@@ -663,6 +670,10 @@ public class BottomTextRecordView {
     }
 
 
+    public void animateRecordButton(final float maxPeak) {
+        imageViewMic.animate().scaleX(1 + maxPeak).scaleY(1 + maxPeak).setDuration(10).start();
+    }
+
     private boolean isRecordPermissionGranted() {
 
         if (recordPermissionHandler == null) {
@@ -677,6 +688,7 @@ public class BottomTextRecordView {
     private void showErrorLog(String s) {
         Log.e(TAG, s);
     }
+
 
     public enum UserBehaviour {
         CANCELING,

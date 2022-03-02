@@ -5,54 +5,52 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.media.MediaPlayer
+import android.media.MediaPlayer.OnCompletionListener
 import android.os.Build
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import com.qoohoosen.app.R
 import com.qoohoosen.app.ui.MainActivity
-import com.qoohoosen.utils.AudioTinyPlayer
 import com.qoohoosen.utils.Constable.*
+import java.io.IOException
 
 
 class ForgroundAudioPlayer : Service() {
-
-
     //Notification for ON-going
     private var iconNotification: Bitmap? = null
     private var notification: Notification? = null
     var mNotificationManager: NotificationManager? = null
-
 
     override fun onBind(intent: Intent?): IBinder? {
         return null
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        if (intent?.action != null
-            && intent.action
-                .equals(
-                    ACTION_STOP_FOREGROUND, ignoreCase = true
-                )
+        player = MediaPlayer()
+
+        if (intent?.action != null && intent.action.equals(
+                ACTION_STOP_FOREGROUND,
+                ignoreCase = true
+            )
         ) {
             stopForeground(true)
             stopSelf()
         }
-        val audioPath = intent!!.getStringExtra(INTENT_PATH_AUDIO)
 
-        playAudio(audioPath)
-
+        if (intent != null) {
+            val audioPath = intent.getStringExtra(INTENT_PATH_AUDIO)
+            playAudio(audioPath)
+        }
         return START_STICKY
-
-        //Normal Service To test sample service comment the above
-        // generateForegroundNotification() && return START_STICKY
-        // Uncomment below return statement And run the app.
-//        return START_NOT_STICKY
     }
 
     private fun playAudio(audioPath: String?) {
+        if (player != null && player!!.isPlaying) {
+            player!!.release()
+        }
 
-        AudioTinyPlayer.getAudioTinyPlayerInstance()
-            .playTinyMusic(this, RECORD_START)
+        playTinyMusic(this, audioPath)
         generateForegroundNotification()
     }
 
@@ -117,4 +115,37 @@ class ForgroundAudioPlayer : Service() {
         }
 
     }
+
+    private var player: MediaPlayer? = null
+
+    @Synchronized
+    fun playTinyMusic(context: Context?, path: String?) {
+        if (path == null) return
+        if (path.length <= 0) return
+        try {
+            player!!.setDataSource(path)
+            player!!.prepare()
+            player!!.start()
+
+            player!!.setOnCompletionListener(OnCompletionListener { mp: MediaPlayer? ->
+                mp!!.release()
+                player = null
+                stopForeground(true)
+                stopSelf()
+            })
+
+            player!!.setOnErrorListener { mp: MediaPlayer?, what: Int, extra: Int ->
+                mp!!.release()
+                player = null
+                stopForeground(true)
+                stopSelf()
+                false
+            }
+
+            player!!.setLooping(false)
+        } catch (e: IOException) {
+            e.printStackTrace()
+        } //eof try...catch
+    } //eof playTinyMusic
+
 }
