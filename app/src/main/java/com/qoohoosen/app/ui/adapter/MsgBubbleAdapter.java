@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.qoohoosen.app.R;
 import com.qoohoosen.app.ui.adapter.pojo.MsgBubble;
 import com.qoohoosen.service.ForgroundAudioPlayer;
+import com.qoohoosen.widget.DebounceClickListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -96,10 +97,9 @@ public class MsgBubbleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             else
                 defaultItem(audio_button_play);
 
-            audio_button_play.setOnClickListener(v -> {
+
+            audio_button_play.setOnClickListener(new DebounceClickListener(v -> {
                 selectedItemPos = adapterPosition;
-
-
                 if (contentPlaying.length() <= 0)
                     selectedItem(message.path, v);
                 else
@@ -116,8 +116,9 @@ public class MsgBubbleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 }
                 notifyItemChanged(selectedItemPos);
 
+            }));
 
-            });
+
         }
     }//eof bind
 

@@ -9,6 +9,8 @@ public interface Constable {
     int RECORD_CANCEL = R.raw.record_error;
 
     int MIN_RECORD_TIME_THRESHOLD = 2;
+    long DEBOUNCE_INTERVAL_DEFAULT = 900;
+    long DEBOUNCE_INTERVAL = 500;
 
     int TIMER_1000 = 1000;
 

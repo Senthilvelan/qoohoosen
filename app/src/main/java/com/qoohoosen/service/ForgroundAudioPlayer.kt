@@ -119,7 +119,8 @@ class ForgroundAudioPlayer : Service() {
 
     override fun onDestroy() {
         super.onDestroy()
-        player!!.release()
+        if (player != null)
+            player!!.release()
         player = null
         stopForeground(true)
         stopSelf()

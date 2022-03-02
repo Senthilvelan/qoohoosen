@@ -1,5 +1,6 @@
 package com.qoohoosen.widget;
 
+import static com.qoohoosen.utils.Constable.DEBOUNCE_INTERVAL;
 import static com.qoohoosen.utils.Constable.TIMER_1000;
 
 import android.animation.Animator;
@@ -343,10 +344,10 @@ public class BottomTextRecordView {
             return true;
         });
 
-        imageViewStop.setOnClickListener(v -> {
+        imageViewStop.setOnClickListener(new DebounceClickListener(v -> {
             isLocked = false;
             stopRecording(RecordingBehaviour.LOCK_DONE);
-        });
+        }, DEBOUNCE_INTERVAL));
     }
 
     private void translateY(float y) {
