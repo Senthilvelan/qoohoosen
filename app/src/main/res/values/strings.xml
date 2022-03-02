@@ -3,6 +3,10 @@
 
     <string name="slide_to_cancel">"Slide to cancel"</string>
     <string name="type_a_message">Message</string>
-
+    <string name="allow_access">Allow Access</string>
     <bool name="is_right_to_left">false</bool>
+    <string name="access_record_mic">Access Mic</string>
+    <string name="grant_permission_order_description">qoohoo needs storage permission to record.
+        Without this permission, the application couldn\'t run properly.</string>
+
 </resources>
