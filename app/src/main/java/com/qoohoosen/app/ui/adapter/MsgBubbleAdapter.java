@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.Random;
 import java.util.TimeZone;
 
 
@@ -32,6 +31,8 @@ public class MsgBubbleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private static SimpleDateFormat timeFormatter;
     private Context context;
     private static String contentPlaying = "";
+    private int selectedItemPos = -1;
+    private int lastItemSelectedPos = -1;
 
 
     public MsgBubbleAdapter(Context context) {
@@ -54,7 +55,8 @@ public class MsgBubbleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        ((MessageViewHolder) holder).bind(msgBubbleArrayList.get(position));
+
+        ((MessageViewHolder) holder).bind(msgBubbleArrayList.get(position), position);
     }
 
     @Override
@@ -87,7 +89,13 @@ public class MsgBubbleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
         }
 
-        public void bind(final MsgBubble message) {
+        @Override
+        public String toString() {
+            return super.toString();
+        }
+
+        public void bind(final MsgBubble message, int adapterPosition) {
+
 
             if (message.type == MsgBubble.TYPE_AUDIO) {
 //                textViewTitle.setCompoundDrawablesWithIntrinsicBounds(R.drawable.mic_small,
@@ -106,17 +114,35 @@ public class MsgBubbleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 textViewDescription.setText("");
             }
 
+//            if (selectedPosition == position) {
+//                audio_button_play.setImageResource(android.R.drawable.ic_media_pause);
+//            } else {
+//                audio_button_play.setImageResource(android.R.drawable.ic_media_play);
+//            }
+
+            if (adapterPosition == selectedItemPos)
+                selectedItem(message.path, audio_button_play);
+            else
+                defaultItem(audio_button_play);
+
+
             audio_button_play.setOnClickListener(v -> {
+                selectedItemPos = adapterPosition;
+
+                if (lastItemSelectedPos == -1)
+                    lastItemSelectedPos = selectedItemPos;
+                else {
+                    notifyItemChanged(lastItemSelectedPos);
+                    lastItemSelectedPos = selectedItemPos;
+                }
+                notifyItemChanged(selectedItemPos);
 
                 if (contentPlaying.length() <= 0) {
-                    contentPlaying = message.path;
-                    audio_button_play.setImageResource(android.R.drawable.ic_media_pause);
-                    context.startService(new Intent(context, ForgroundAudioPlayer.class)
-                            .putExtra(INTENT_PATH_AUDIO, contentPlaying));
+                    //Selected
+                    selectedItem(message.path, v);
                 } else {
-                    contentPlaying = "";
-                    audio_button_play.setImageResource(android.R.drawable.ic_media_play);
-                    context.stopService(new Intent(context, ForgroundAudioPlayer.class));
+                    //Unselected
+                    defaultItem(v);
                 }
 
 
@@ -130,10 +156,17 @@ public class MsgBubbleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         }
     }
 
-    private static byte[] generateDummyItem(int length, @NonNull Random rnd) {
-        final byte[] raw = new byte[length];
-        rnd.nextBytes(raw);
-
-        return raw;
+    private void defaultItem(View v) {
+        contentPlaying = "";
+        ((ImageView) v).setImageResource(android.R.drawable.ic_media_play);
+        context.stopService(new Intent(context, ForgroundAudioPlayer.class));
     }
+
+    private void selectedItem(String path, View v) {
+        contentPlaying = path;
+        ((ImageView) v).setImageResource(android.R.drawable.ic_media_pause);
+        context.startService(new Intent(context, ForgroundAudioPlayer.class)
+                .putExtra(INTENT_PATH_AUDIO, contentPlaying));
+    }
+
 }
