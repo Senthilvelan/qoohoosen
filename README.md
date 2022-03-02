@@ -9,7 +9,7 @@ The app made up of two version,
 
 QooHooAudio depends on audiovisualizer, glassmorphism and omrecorder lib.
 
-# It has been configures for the audio frequency "44100"hz in mono which results best sound quality in wav format
+## It has been configures for the audio frequency "44100"hz in mono which results best sound quality in wav format
 Its possible to capture with background and can omit the silence using this lib
 
-# The app needs only record mic permission and storage permission not needed,since app make use of internal memory supports upto 200 Mb for the demo purpose.permission.
+## The app needs only record mic permission and storage permission not needed,since app make use of internal memory supports upto 200 Mb for the demo purpose.permission.
