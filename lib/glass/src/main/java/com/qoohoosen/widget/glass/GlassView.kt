@@ -8,7 +8,6 @@ import android.util.AttributeSet
 import android.view.View
 import android.widget.FrameLayout
 import androidx.customview.view.AbsSavedState
-import com.qoohoosen.app.R
 
 class GlassView : FrameLayout {
     var cornerRadius: Float = DEFAULT_CORNER_RADIUS
