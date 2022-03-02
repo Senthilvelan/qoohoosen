@@ -16,3 +16,4 @@ rootProject.name = "QooHooSenthil"
 include ':app'
 include ':lib:glass'
 include ':lib:recorder'
+include ':audiovisualizer'

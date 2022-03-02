@@ -4,6 +4,7 @@ import static com.qoohoosen.utils.Constable.INTENT_PATH_AUDIO;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,11 +14,14 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.github.scrobot.audiovisualizer.SoundWaveView;
 import com.qoohoosen.app.R;
 import com.qoohoosen.app.ui.adapter.pojo.MsgBubble;
 import com.qoohoosen.service.ForgroundAudioPlayer;
 import com.qoohoosen.widget.DebounceClickListener;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -67,6 +71,8 @@ public class MsgBubbleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         public TextView textViewTitle;
         public TextView textViewDescription;
         public ImageView audio_button_play;
+        //        public SoundVisualizerBarView vWaveView;
+        public SoundWaveView vWaveView;
 
 
         public MessageViewHolder(View view) {
@@ -74,7 +80,39 @@ public class MsgBubbleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             textViewTitle = itemView.findViewById(R.id.textViewTitle);
             textViewDescription = itemView.findViewById(R.id.textViewDescription);
             audio_button_play = itemView.findViewById(R.id.audio_button_play);
+            vWaveView = itemView.findViewById(R.id.vWaveView);
+
         }
+
+        public void updateWave(String path) {
+            try {
+                Uri uri = Uri.fromFile(new File(path));
+//            vWaveView.addAudioFileUrl(file.getAbsolutePath());
+                if (vWaveView != null) {
+                    vWaveView.setVisibility(View.VISIBLE);
+                    vWaveView.addAudioFileUri(uri, true);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+
+//        public void updateWaveBar(String path) {
+//            try {
+//                Uri uri = Uri.fromFile(new File(path));
+////            vWaveView.addAudioFileUrl(file.getAbsolutePath());
+//                if (vWaveView != null) {
+//                    vWaveView.setVisibility(View.VISIBLE);
+////                    vWaveView.addAudioFileUri(uri, true);
+//                    vWaveView.updateVisualizer(uri);
+//                    vWaveView.updatePlayerPercent(50);
+//
+//                }
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        }
 
         @Override
         public String toString() {
@@ -82,6 +120,7 @@ public class MsgBubbleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         }
 
         public void bind(final MsgBubble message, int adapterPosition) {
+
 
             if (message.type == MsgBubble.TYPE_AUDIO) {
                 textViewTitle.setText(String.valueOf(message.index));
@@ -100,10 +139,11 @@ public class MsgBubbleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
             audio_button_play.setOnClickListener(new DebounceClickListener(v -> {
                 selectedItemPos = adapterPosition;
-                if (contentPlaying.length() <= 0)
+                if (contentPlaying.length() <= 0) {
                     selectedItem(message.path, v);
-                else
+                } else {
                     defaultItem(v);
+                }
 
                 if (lastItemSelectedPos == selectedItemPos)
                     return;
@@ -134,7 +174,10 @@ public class MsgBubbleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             ((ImageView) v).setImageResource(android.R.drawable.ic_media_pause);
             context.startService(intent
                     .putExtra(INTENT_PATH_AUDIO, contentPlaying));
+
+
         }//eof if
     }//eof selectedItem
+
 
 }

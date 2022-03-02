@@ -1,6 +1,5 @@
 package com.qoohoosen.app.ui;
 
-import static androidx.core.content.PermissionChecker.PERMISSION_GRANTED;
 import static com.qoohoosen.utils.Constable.FILE_EXT;
 import static com.qoohoosen.utils.Constable.FREQUENCY;
 import static com.qoohoosen.utils.Constable.MIN_RECORD_TIME_THRESHOLD;
@@ -10,10 +9,14 @@ import static com.qoohoosen.utils.Constable.RECORD_START;
 import static com.qoohoosen.utils.Constable.TIMER_1000;
 
 import android.Manifest;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.media.AudioFormat;
 import android.media.MediaRecorder;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -21,14 +24,19 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.PermissionDeniedResponse;
+import com.karumi.dexter.listener.PermissionGrantedResponse;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.single.PermissionListener;
 import com.qoohoosen.app.R;
 import com.qoohoosen.app.ui.adapter.MsgBubbleAdapter;
 import com.qoohoosen.app.ui.adapter.pojo.MsgBubble;
@@ -71,8 +79,7 @@ public class MainActivity extends AppCompatActivity implements
         Toolbar toolbarHome = findViewById(R.id.toolbarHome);
         setSupportActionBar(toolbarHome);
 
-//        startService(new Intent(this, ForgroundAudioPlayer.class)
-//                .putExtra(INTENT_PATH_AUDIO, ""));
+        permissionChecking();
 
 //        setupNoiseRecorder();
         startInitRecorder();
@@ -97,6 +104,33 @@ public class MainActivity extends AppCompatActivity implements
         getListOfFiles();
     }
 
+    private void permissionChecking() {
+        Dexter.withContext(this)
+                .withPermission(Manifest.permission.RECORD_AUDIO)
+                .withListener(new PermissionListener() {
+                    @Override
+                    public void onPermissionGranted(PermissionGrantedResponse response) {
+                        // permission is granted,start the process
+                    }
+
+                    @Override
+                    public void onPermissionDenied(PermissionDeniedResponse response) {
+                        // check for permanent denial of permission
+                        if (response.isPermanentlyDenied()) {
+                            // navigate user to app settings
+                            showSettingsDialog();
+
+                        }
+                    }
+
+                    @Override
+                    public void onPermissionRationaleShouldBeShown(PermissionRequest permission,
+                                                                   PermissionToken token) {
+                        token.continuePermissionRequest();
+                    }
+                }).check();
+    }
+
 
     private void setUpRecycler() {
         recyclerViewMsgBubble.setLayoutManager(new LinearLayoutManager(this,
@@ -114,28 +148,40 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public boolean isPermissionGranted() {
+
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M)
             return true;
 
-        boolean recordPermissionAvailable = false;
-        try {
-            recordPermissionAvailable = ContextCompat
-                    .checkSelfPermission(MainActivity.this, Manifest.permission.RECORD_AUDIO)
-                    == PERMISSION_GRANTED;
-        } catch (Exception e) {
-            debug(e.toString());
+        int checkVal = getApplicationContext()
+                .checkCallingOrSelfPermission(android.Manifest.permission.RECORD_AUDIO);
+
+        if (checkVal == PackageManager.PERMISSION_GRANTED) {
+            return true;
+        } else {
+            permissionChecking();
+            return false;
         }
 
 
-        if (recordPermissionAvailable)
-            return true;
-
-        ActivityCompat.
-                requestPermissions(MainActivity.this,
-                        new String[]{Manifest.permission.RECORD_AUDIO},
-                        0);
-
-        return false;
+//        boolean recordPermissionAvailable = false;
+//        try {
+//            recordPermissionAvailable = ContextCompat
+//                    .checkSelfPermission(MainActivity.this, Manifest.permission.RECORD_AUDIO)
+//                    == PERMISSION_GRANTED;
+//        } catch (Exception e) {
+//            debug(e.toString());
+//        }
+//
+//        if (recordPermissionAvailable)
+//            return true;
+//
+//        ActivityCompat.
+//                requestPermissions(MainActivity.this,
+//                        new String[]{Manifest.permission.RECORD_AUDIO},
+//                        0);
+//
+//
+//        return false;
     }
 
     @Override
@@ -273,6 +319,7 @@ public class MainActivity extends AppCompatActivity implements
                 if (!fileOutput.isEmpty()) {
                     MsgBubble msgBubble = new MsgBubble(index, dirFiles.length, fileOutput);
                     msgBubbleAdapter.add(msgBubble);
+                    debug(fileOutput);
                     index++;
                 }//eof if
             }//eof for
@@ -291,5 +338,36 @@ public class MainActivity extends AppCompatActivity implements
         Log.d(TAG, log);
     }
 
+    /**
+     * Showing Alert Dialog with Settings option
+     * Navigates user to app settings
+     * NOTE: Keep proper title and message depending on your app
+     */
+    private void showSettingsDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        builder.setTitle("Need Permissions");
+        builder.setMessage("QooHoo needs permission to record voice ! " +
+                " You can grant them in app settings.");
+        builder.setPositiveButton("GOTO SETTINGS", (dialog, which) -> {
+            dialog.cancel();
+            openSettings();
+        });
+        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
+        builder.show();
+
+    }
+
+    // navigating user to app settings
+    private void openSettings() {
+        try {
+            Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+            Uri uri = Uri.fromParts("package", getPackageName(), null);
+            intent.setData(uri);
+            startActivityForResult(intent, 101);
+        } catch (Exception e) {
+            debug(e.toString());
+        }
+
+    }
 
 }

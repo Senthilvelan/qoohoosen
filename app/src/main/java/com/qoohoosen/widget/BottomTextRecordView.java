@@ -202,20 +202,20 @@ public class BottomTextRecordView {
         return recordingListener;
     }
 
-    public View getSendView() {
-        return imageViewSend;
-    }
-
-    public EditText getMessageView() {
-        return editTextMessage;
-    }
-
     public void setRecordingListener(RecordingListener recordingListener) {
         this.recordingListener = recordingListener;
     }
 
     public void setRecordPermissionHandler(RecordPermissionHandler recordPermissionHandler) {
         this.recordPermissionHandler = recordPermissionHandler;
+    }
+
+    public View getSendView() {
+        return imageViewSend;
+    }
+
+    public EditText getMessageView() {
+        return editTextMessage;
     }
 
     @SuppressLint("ClickableViewAccessibility")
