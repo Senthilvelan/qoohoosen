@@ -66,12 +66,10 @@ public class SoundWaveView extends FrameLayout implements SoundViewPlayerOnPlayL
         this.player = player;
     }
 
-    public void addAudioFileUri(final Uri audioFileUri, boolean andPlay) throws IOException {
+    public void addAudioFileUri(final Uri audioFileUri) throws IOException {
         player.setAudioSource(context, audioFileUri);
-
         visualizerBar.updateVisualizer(audioFileUri);
-        if (andPlay)
-            player.toggle();
+
     }
 
     public void addAudioFileUrl(String audioFileUrl) throws IOException {

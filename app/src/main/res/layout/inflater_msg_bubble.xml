@@ -69,13 +69,30 @@
             tools:text=""
             tools:textColor="@color/white" />
 
-        <com.github.scrobot.audiovisualizer.SoundWaveView
-            android:id="@+id/vWaveView"
+        <FrameLayout
+            android:id="@+id/frameWaves"
             android:layout_width="match_parent"
             android:layout_height="64dp"
             android:layout_below="@+id/textViewDescription"
-            android:layout_marginTop="40dp"
-            android:visibility="gone" />
+            android:layout_marginTop="30dp"
+            android:visibility="visible">
+
+            <com.github.scrobot.audiovisualizer.SoundWaveView
+                android:id="@+id/vWaveView"
+                android:layout_width="match_parent"
+                android:layout_height="64dp"
+                android:layout_below="@+id/textViewDescription"
+                android:layout_marginTop="1dp"
+                android:visibility="visible" />
+        </FrameLayout>
+
+        <!--        <com.github.scrobot.audiovisualizer.SoundWaveView
+                    android:id="@+id/vWaveView"
+                    android:layout_width="match_parent"
+                    android:layout_height="64dp"
+                    android:layout_below="@+id/textViewDescription"
+                    android:layout_marginTop="40dp"
+                    android:visibility="gone" />-->
 
         <!--        <com.github.scrobot.audiovisualizer.SoundVisualizerBarView
                     android:id="@+id/vWaveView"
