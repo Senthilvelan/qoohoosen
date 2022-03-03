@@ -25,8 +25,6 @@ public class DefaultSoundViewPlayer implements SoundViewPlayer {
 
     @Override
     public void preparePlayer() {
-        mediaPlayer.reset();
-
         mediaPlayer.prepareAsync();
         mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override

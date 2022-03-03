@@ -167,7 +167,7 @@ public class MsgBubbleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
         public void bind(final MsgBubble message, int adapterPosition) {
             if (message.type == MsgBubble.TYPE_AUDIO) {
-                textViewTitle.setText(String.valueOf(message.index));
+                textViewTitle.setText("   Recording #"+String.valueOf(message.index));
                 textViewDescription.setText(message.path);
             } else if (message.type == MsgBubble.TYPE_TEXT) {
                 textViewDescription.setText(message.text);
@@ -184,14 +184,16 @@ public class MsgBubbleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             }
 
             updateWave(message.path);
+            audio_button_play.setVisibility(View.INVISIBLE);
+            textViewDescription.setVisibility(View.GONE);
             audio_button_play.setOnClickListener(new DebounceClickListener(v -> {
                 selectedItemPos = adapterPosition;
                 if (contentPlaying.length() <= 0) {
                     selectedItem(message.path, v);
-                  //  updateWave(message.path);
+                    //  updateWave(message.path);
                 } else {
                     defaultItem(v);
-                  //  removeUpdateWave(message.path);
+                    //  removeUpdateWave(message.path);
                 }
 
                 if (lastItemSelectedPos == selectedItemPos)

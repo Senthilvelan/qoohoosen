@@ -81,6 +81,7 @@
                 android:id="@+id/vWaveView"
                 android:layout_width="match_parent"
                 android:layout_height="64dp"
+                android:layout_marginStart="10dp"
                 android:layout_below="@+id/textViewDescription"
                 android:layout_marginTop="1dp"
                 android:visibility="visible" />
