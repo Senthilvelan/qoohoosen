@@ -42,6 +42,7 @@ public class PermissionActivity extends AppCompatActivity {
                     public void onPermissionGranted(PermissionGrantedResponse response) {
                         Intent intent = new Intent(PermissionActivity.this, MainActivity.class);
                         startActivity(intent);
+                        finish();
                     }
 
                     @Override
