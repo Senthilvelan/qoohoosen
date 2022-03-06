@@ -16,6 +16,7 @@
         android:layout_marginLeft="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
+        android:paddingBottom="8dp"
         android:text="00:00"
         android:textSize="@dimen/timer_text_size"
         android:visibility="visible" />
@@ -30,13 +31,14 @@
 
     <ImageView
         android:id="@+id/vActionButton"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
+        android:layout_width="54dp"
+        android:layout_height="54dp"
         android:layout_marginStart="0dp"
         android:layout_marginLeft="0dp"
         android:layout_marginEnd="0dp"
         android:layout_marginRight="0dp"
         android:background="@android:color/transparent"
+        android:padding="2dp"
         android:visibility="visible"
         app:srcCompat="@drawable/ic_play" />
 

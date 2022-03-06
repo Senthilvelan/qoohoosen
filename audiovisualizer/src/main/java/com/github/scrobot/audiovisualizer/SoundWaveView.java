@@ -116,12 +116,13 @@ public class SoundWaveView extends FrameLayout implements SoundViewPlayerOnPlayL
     @Override
     public void onDurationProgress(SoundViewPlayer player, Long duration, Long currentTimestamp) {
         visualizerBar.updatePlayerPercent(currentTimestamp / (float) duration);
-        timer.setText(ConverterUtil.convertMillsToTime(duration - currentTimestamp));
+        timer.setText(ConverterUtil.convertMillsToTime(currentTimestamp));
     }
 
     @Override
     public void onPause(SoundViewPlayer player) {
         actionButton.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_play));
+        timer.setVisibility(INVISIBLE);
     }
 
     @Override
@@ -131,13 +132,16 @@ public class SoundWaveView extends FrameLayout implements SoundViewPlayerOnPlayL
 
     @Override
     public void onPrepared(SoundViewPlayer player) {
-        timer.setText(ConverterUtil.convertMillsToTime(player.getDuration()));
+//        timer.setText(ConverterUtil.convertMillsToTime(player.getDuration()));
+//        timer.setText(ConverterUtil.convertMillsToTime(0L));
+
     }
 
     @Override
     public void onComplete(SoundViewPlayer player) {
         actionButton.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_play));
         visualizerBar.updatePlayerPercent(0);
+        timer.setVisibility(INVISIBLE);
 
     }
 
