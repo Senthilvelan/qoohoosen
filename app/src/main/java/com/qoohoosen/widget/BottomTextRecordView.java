@@ -466,6 +466,8 @@ public class BottomTextRecordView {
             editTextMessage.setVisibility(View.VISIBLE);
             layoutMessage.setVisibility(View.VISIBLE);
             imageAudioAnimate.setVisibility(View.GONE);
+            linearLayoutMic.setVisibility(View.INVISIBLE);
+
             imageViewEmoji.setVisibility(View.VISIBLE);
 
             imageViewStop.setVisibility(View.GONE);
@@ -491,7 +493,9 @@ public class BottomTextRecordView {
 
         linearLayoutMic.setVisibility(View.VISIBLE);
         imageAudioAnimate.setVisibility(View.VISIBLE);
-        layoutMessage.setVisibility(View.INVISIBLE);
+        linearLayoutMic.setVisibility(View.VISIBLE);
+
+        layoutMessage.setVisibility(View.GONE);
 
         editTextMessage.setVisibility(View.INVISIBLE);
         imageViewEmoji.setVisibility(View.INVISIBLE);
@@ -645,6 +649,8 @@ public class BottomTextRecordView {
                                                         editTextMessage.requestFocus();
                                                         layoutMessage.setVisibility(View.VISIBLE);
                                                         imageAudioAnimate.setVisibility(View.GONE);
+                                                        linearLayoutMic.setVisibility(View.INVISIBLE);
+
                                                     }
 
                                                     @Override
