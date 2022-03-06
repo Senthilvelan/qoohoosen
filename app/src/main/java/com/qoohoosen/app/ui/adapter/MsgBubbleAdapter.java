@@ -29,6 +29,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.supercharge.shimmerlayout.ShimmerLayout;
+
 
 public class MsgBubbleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         implements SoundWaveView.SoundWaveOnCompleteListener {
@@ -93,6 +95,8 @@ public class MsgBubbleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         public FrameLayout frameWaves;
         public SoundWaveView soundWaveView;
         public RelativeLayout relativeLayoutMsgInflater;
+        public ShimmerLayout shimmer_layout_inflater;
+
 
 
         public MessageViewHolder(View view) {
@@ -103,6 +107,7 @@ public class MsgBubbleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             soundWaveView = itemView.findViewById(R.id.vWaveView);
             frameWaves = itemView.findViewById(R.id.frameWaves);
             relativeLayoutMsgInflater = itemView.findViewById(R.id.relativeLayoutMsgInflater);
+            shimmer_layout_inflater = itemView.findViewById(R.id.shimmer_layout_inflater);
         }
 
 
@@ -128,9 +133,12 @@ public class MsgBubbleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             if (adapterPosition == selectedItemPos) {
                 selectedItem(frameWaves, soundWaveView, audio_button_play,
                         msgBubble.path, adapterPosition);
+                shimmer_layout_inflater.startShimmerAnimation();
+
             } else {
                 defaultItem(frameWaves, soundWaveView, audio_button_play,
                         msgBubble.path, adapterPosition);
+                shimmer_layout_inflater.stopShimmerAnimation();
             }
 
 
@@ -176,6 +184,7 @@ public class MsgBubbleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         ((ImageView) view).setImageResource(com.github.scrobot.audiovisualizer.R.drawable.ic_play);
         removeUpdateWave(viewGroup, soundWaveView,
                 view, path, adapterPosition);
+
         /*
         Enable when service needs
         //Notification foreground

@@ -9,87 +9,99 @@
     android:layout_marginStart="0dp"
     android:layout_marginEnd="0dp">
 
-    <com.qoohoosen.widget.glass.GlassView
+    <io.supercharge.shimmerlayout.ShimmerLayout
+        android:id="@+id/shimmer_layout_inflater"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="4dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
-        android:background="?attr/selectableItemBackground"
-        android:clickable="false"
-        android:focusable="false"
-        android:orientation="vertical">
+        android:layout_centerInParent="true"
+        android:layout_centerHorizontal="true"
+        app:shimmer_animation_duration="9000"
+        app:shimmer_color="@color/white_smoke"
+        app:shimmer_auto_start="false"
+        app:shimmer_reverse_animation="false">
 
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/textViewTitle"
+        <com.qoohoosen.widget.glass.GlassView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            android:gravity="center"
-            android:maxLines="1"
-            android:paddingTop="16dp"
-            android:paddingBottom="16dp"
-            android:textColor="@color/white_smoke"
-            android:textSize="16sp"
-            android:textStyle="normal"
-            tools:text="Recording  #1"
-            tools:textColor="@color/white" />
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/textViewDescription"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/textViewTitle"
-            android:layout_marginStart="12dp"
-            android:layout_marginTop="2dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="4dp"
             android:layout_marginEnd="16dp"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:paddingTop="2dp"
-            android:paddingBottom="16dp"
-            android:textColor="@color/white"
-            android:textSize="14sp"
-            android:visibility="gone"
-            tools:text=""
-            tools:textColor="@color/white" />
+            android:layout_marginBottom="16dp"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="false"
+            android:focusable="false"
+            android:orientation="vertical">
 
-        <FrameLayout
-            android:id="@+id/frameWaves"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/textViewDescription"
-            android:visibility="visible">
 
-            <com.github.scrobot.audiovisualizer.SoundWaveView
-                android:id="@+id/vWaveView"
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/textViewTitle"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-        </FrameLayout>
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:gravity="center"
+                android:maxLines="1"
+                android:paddingTop="16dp"
+                android:paddingBottom="16dp"
+                android:textColor="@color/white_smoke"
+                android:textSize="16sp"
+                android:textStyle="normal"
+                tools:text="Recording  #1"
+                tools:textColor="@color/white" />
 
-        <!--        <com.github.scrobot.audiovisualizer.SoundWaveView
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/textViewDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/textViewTitle"
+                android:layout_marginStart="12dp"
+                android:layout_marginTop="2dp"
+                android:layout_marginEnd="16dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:paddingTop="2dp"
+                android:paddingBottom="16dp"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:visibility="gone"
+                tools:text=""
+                tools:textColor="@color/white" />
+
+            <FrameLayout
+                android:id="@+id/frameWaves"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/textViewDescription"
+                android:visibility="visible">
+
+                <com.github.scrobot.audiovisualizer.SoundWaveView
                     android:id="@+id/vWaveView"
                     android:layout_width="match_parent"
-                    android:layout_height="64dp"
-                    android:layout_below="@+id/textViewDescription"
-                    android:layout_marginTop="40dp"
-                    android:visibility="gone" />-->
+                    android:layout_height="match_parent" />
+            </FrameLayout>
 
-        <!--        <com.github.scrobot.audiovisualizer.SoundVisualizerBarView
-                    android:id="@+id/vWaveView"
-                    android:layout_width="match_parent"
-                    android:layout_height="64dp"
-                    android:layout_below="@+id/textViewDescription"
-                    android:layout_marginTop="40dp"
-                    android:visibility="visible" />-->
+            <!--        <com.github.scrobot.audiovisualizer.SoundWaveView
+                        android:id="@+id/vWaveView"
+                        android:layout_width="match_parent"
+                        android:layout_height="64dp"
+                        android:layout_below="@+id/textViewDescription"
+                        android:layout_marginTop="40dp"
+                        android:visibility="gone" />-->
+
+            <!--        <com.github.scrobot.audiovisualizer.SoundVisualizerBarView
+                        android:id="@+id/vWaveView"
+                        android:layout_width="match_parent"
+                        android:layout_height="64dp"
+                        android:layout_below="@+id/textViewDescription"
+                        android:layout_marginTop="40dp"
+                        android:visibility="visible" />-->
 
 
-    </com.qoohoosen.widget.glass.GlassView>
+        </com.qoohoosen.widget.glass.GlassView>
+    </io.supercharge.shimmerlayout.ShimmerLayout>
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/audio_button_play"
