@@ -115,8 +115,6 @@ public class MainActivity extends AppCompatActivity implements
         });
 
         checkRecyclerItems();
-
-
     }
 
     private void checkRecyclerItems() {
