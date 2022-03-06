@@ -3,7 +3,6 @@ package com.qoohoosen.app.ui.adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,14 +13,12 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.transition.Slide;
-import androidx.transition.Transition;
-import androidx.transition.TransitionManager;
 
 import com.github.scrobot.audiovisualizer.SoundWaveView;
 import com.qoohoosen.app.R;
 import com.qoohoosen.app.ui.adapter.pojo.MsgBubble;
 import com.qoohoosen.service.ForgroundAudioPlayer;
+import com.qoohoosen.utils.UtilsAnimation;
 import com.qoohoosen.widget.DebounceClickListener;
 
 import java.io.File;
@@ -71,7 +68,7 @@ public class MsgBubbleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
 
-        ((MessageViewHolder) holder).bind(msgBubbleArrayList.get(position),position);
+        ((MessageViewHolder) holder).bind(msgBubbleArrayList.get(position), position);
     }
 
     @Override
@@ -96,7 +93,6 @@ public class MsgBubbleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         public SoundWaveView soundWaveView;
         public RelativeLayout relativeLayoutMsgInflater;
         public ShimmerLayout shimmer_layout_inflater;
-
 
 
         public MessageViewHolder(View view) {
@@ -124,7 +120,7 @@ public class MsgBubbleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
             if (msgBubble.type == MsgBubble.TYPE_AUDIO) {
                 textViewTitle.setText(String.format("Recording #%s",
-                        String.valueOf(msgBubble.index +1)));
+                        String.valueOf(msgBubble.index + 1)));
             } else if (msgBubble.type == MsgBubble.TYPE_TEXT) {
                 textViewDescription.setText(msgBubble.text);
             } else
@@ -202,7 +198,7 @@ public class MsgBubbleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         } catch (IOException e) {
             e.printStackTrace();
         }
-        toggleAnim(viewGroup, soundWaveView, View.GONE);
+        UtilsAnimation.slideDown(soundWaveView, 500L);
 
     }//eof removeUpdateWave
 
@@ -223,7 +219,7 @@ public class MsgBubbleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         try {
             Uri uri = Uri.fromFile(new File(path));
             if (view != null) {
-                toggleAnim(parent, view, View.VISIBLE);
+                UtilsAnimation.slideUp(view, 500L);
                 view.addAudioFileUri(uri);
             }
         } catch (Exception e) {
@@ -231,16 +227,5 @@ public class MsgBubbleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         }
     }//eof updateWave
 
-    private void toggleAnim(ViewGroup parent, View view, int visibility) {
-//        Transition transition = new Fade();
-        Transition transition = new Slide(Gravity.BOTTOM);
-        transition.setDuration(1500L);
-        transition.addTarget(view);
-
-        TransitionManager.beginDelayedTransition(parent, transition);
-//        image.setVisibility(show ? View.VISIBLE : View.GONE);
-        view.setVisibility(visibility);
-
-    }//eof toggleAnim
 
 }

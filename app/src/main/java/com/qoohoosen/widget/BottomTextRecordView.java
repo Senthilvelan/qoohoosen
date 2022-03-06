@@ -29,6 +29,7 @@ import android.widget.TextView;
 
 import com.qoohoosen.app.R;
 import com.qoohoosen.utils.Utilities;
+import com.qoohoosen.utils.UtilsAnimation;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -162,7 +163,7 @@ public class BottomTextRecordView {
         dp = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1,
                 view.getContext().getResources().getDisplayMetrics());
 
-//        animBlink = AnimationUtils.loadAnimation(view.getContext(),
+//        animBlink = UtilsAnimation.loadAnimation(view.getContext(),
 //                R.anim.blink);
         animJump = AnimationUtils.loadAnimation(view.getContext(),
                 R.anim.jump);
@@ -363,7 +364,8 @@ public class BottomTextRecordView {
         }
 
         if (layoutLock.getVisibility() != View.VISIBLE) {
-            layoutLock.setVisibility(View.VISIBLE);
+//            layoutLock.setVisibility(View.VISIBLE);
+            UtilsAnimation.slideUp(layoutLock, 600L);
         }
 
         imageViewAudio.setTranslationY(y);
@@ -387,7 +389,8 @@ public class BottomTextRecordView {
 
         if (Math.abs(x) < imageViewMic.getWidth() / 2) {
             if (layoutLock.getVisibility() != View.VISIBLE) {
-                layoutLock.setVisibility(View.VISIBLE);
+//                layoutLock.setVisibility(View.VISIBLE);
+                UtilsAnimation.slideUp(layoutLock, 600L);
             }
         } else {
             if (layoutLock.getVisibility() != View.GONE) {
@@ -465,8 +468,12 @@ public class BottomTextRecordView {
             imageViewMic.setVisibility(View.INVISIBLE);
             editTextMessage.setVisibility(View.VISIBLE);
             layoutMessage.setVisibility(View.VISIBLE);
-            imageAudioAnimate.setVisibility(View.GONE);
-            linearLayoutMic.setVisibility(View.INVISIBLE);
+
+//            imageAudioAnimate.setVisibility(View.GONE);
+//            linearLayoutMic.setVisibility(View.INVISIBLE);
+            UtilsAnimation.slideDown(linearLayoutMic, 800L);
+            UtilsAnimation.slideDown(imageAudioAnimate, 500L);
+
 
             imageViewEmoji.setVisibility(View.VISIBLE);
 
@@ -491,9 +498,6 @@ public class BottomTextRecordView {
 
         stopTrackingAction = false;
 
-        linearLayoutMic.setVisibility(View.VISIBLE);
-        imageAudioAnimate.setVisibility(View.VISIBLE);
-        linearLayoutMic.setVisibility(View.VISIBLE);
 
         layoutMessage.setVisibility(View.GONE);
 
@@ -501,15 +505,32 @@ public class BottomTextRecordView {
         imageViewEmoji.setVisibility(View.INVISIBLE);
         imageViewAudio.animate().scaleXBy(1f).scaleYBy(1f)
                 .setDuration(200).setInterpolator(new OvershootInterpolator()).start();
-        timeText.setVisibility(View.VISIBLE);
-        layoutLock.setVisibility(View.VISIBLE);
-        layoutSlideCancel.setVisibility(View.VISIBLE);
+
+//        timeText.setVisibility(View.VISIBLE);
+//        layoutLock.setVisibility(View.VISIBLE);
+//        layoutSlideCancel.setVisibility(View.VISIBLE);
+
+        // imageAudioAnimate.setVisibility(View.VISIBLE);
+        // linearLayoutMic.setVisibility(View.VISIBLE);
+
+//        imageViewMic.setVisibility(View.VISIBLE);
+//        layoutEffect2.setVisibility(View.VISIBLE);
+//        layoutEffect1.setVisibility(View.VISIBLE);
+
+
+        UtilsAnimation.slideUp(linearLayoutMic, 400L);
+        UtilsAnimation.slideUp(imageAudioAnimate, 300L);
+        UtilsAnimation.slideUp(timeText, 800L);
+        UtilsAnimation.slideUp(layoutLock, 600L);
+        UtilsAnimation.slideUp(layoutSlideCancel, 700L);
+
+        UtilsAnimation.slideUp(imageViewMic, 800L);
+        UtilsAnimation.slideUp(layoutEffect2, 800L);
+        UtilsAnimation.slideUp(layoutEffect1, 800L);
+
+
         shimmerLayoutSlide.startShimmerAnimation();
 
-
-        imageViewMic.setVisibility(View.VISIBLE);
-        layoutEffect2.setVisibility(View.VISIBLE);
-        layoutEffect1.setVisibility(View.VISIBLE);
 
 //        timeText.startAnimation(animBlink);
         imageViewLockArrow.clearAnimation();
@@ -648,8 +669,11 @@ public class BottomTextRecordView {
                                                         editTextMessage.setVisibility(View.VISIBLE);
                                                         editTextMessage.requestFocus();
                                                         layoutMessage.setVisibility(View.VISIBLE);
-                                                        imageAudioAnimate.setVisibility(View.GONE);
-                                                        linearLayoutMic.setVisibility(View.INVISIBLE);
+//                                                        imageAudioAnimate.setVisibility(View.GONE);
+//                                                        linearLayoutMic.setVisibility(View.INVISIBLE);
+                                                        UtilsAnimation.slideDown(linearLayoutMic, 800L);
+                                                        UtilsAnimation.slideDown(imageAudioAnimate, 500L);
+                                                        UtilsAnimation.slideDown(layoutLock,400L);
 
                                                     }
 

@@ -14,7 +14,7 @@
         android:layout_gravity="bottom"
         android:background="@drawable/bg_bottom"
         android:orientation="horizontal"
-        android:visibility="visible">
+        android:visibility="gone">
 
 
     </RelativeLayout>
@@ -142,7 +142,7 @@
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
                     android:layout_centerHorizontal="true"
-                    app:shimmer_animation_duration="2500"
+                    app:shimmer_animation_duration="5000"
                     app:shimmer_color="@color/white_smoke"
                     app:shimmer_reverse_animation="true">
 
