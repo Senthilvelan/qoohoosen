@@ -24,6 +24,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -60,6 +61,7 @@ public class MainActivity extends AppCompatActivity implements
     //Widgets
     private BottomTextRecordView bottomTextRecordView;
     private RecyclerView recyclerViewMsgBubble;
+    private AppCompatButton buttonClean;
 
     //Adapter
     private MsgBubbleAdapter msgBubbleAdapter;
@@ -83,6 +85,7 @@ public class MainActivity extends AppCompatActivity implements
 //        setupNoiseRecorder();
         startInitRecorder();
 
+
         bottomTextRecordView = new BottomTextRecordView();
         bottomTextRecordView.initView(findViewById(R.id.viewRootMain));
 
@@ -90,6 +93,7 @@ public class MainActivity extends AppCompatActivity implements
         View containerView = bottomTextRecordView
                 .setContainerView(R.layout.activity_main_layout_recycle);
         recyclerViewMsgBubble = containerView.findViewById(R.id.recyclerViewMsgBubble);
+        buttonClean = containerView.findViewById(R.id.buttonClean);
         ShimmerLayout shimmerLayoutHeader = containerView.findViewById(R.id.shimmer_layout_header);
         shimmerLayoutHeader.startShimmerAnimation();
 
@@ -101,6 +105,16 @@ public class MainActivity extends AppCompatActivity implements
         bottomTextRecordView.setRecordPermissionHandler(this);
 
         getListOfFiles();
+        buttonClean.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    clearFiles();
+                } catch (Exception e) {
+                    debug(e.toString());
+                }
+            }
+        });
     }
 
     private void permissionChecking() {
@@ -333,6 +347,22 @@ public class MainActivity extends AppCompatActivity implements
 
 
     }//eof getListOfFiles
+
+
+    private void clearFiles() throws Exception {
+//        getFilesDir().delete();
+        File[] dirFiles = getFilesDir().listFiles();
+        if (dirFiles != null && dirFiles.length != 0) {
+            for (File dirFile : dirFiles) {
+                if (dirFile != null)
+                    dirFile.delete();
+            }//eof for
+        }//eof if
+
+        msgBubbleAdapter.clean();
+
+
+    }//eof clearFiles
 
 //    private synchronized void showToast(String message) {
 //        Toast toast = Toast.makeText(this, message, Toast.LENGTH_SHORT);

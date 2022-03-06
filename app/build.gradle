@@ -10,8 +10,8 @@ android {
         applicationId "com.qoohoosen.app"
         minSdk 21
         targetSdk 31
-        versionCode 1
-        versionName "1.0"
+        versionCode 2
+        versionName "1.1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -45,7 +45,7 @@ dependencies {
     implementation project(path: ':lib:recorder')
     implementation project(path: ':lib:glass')
     implementation project(path: ':audiovisualizer')
-    implementation 'ch.acra:acra:4.11.1'
+//    implementation 'ch.acra:acra:4.11.1'
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'

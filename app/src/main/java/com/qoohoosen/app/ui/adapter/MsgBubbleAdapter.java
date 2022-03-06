@@ -52,6 +52,12 @@ public class MsgBubbleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         notifyItemInserted(msgBubbleArrayList.lastIndexOf(message));
     }
 
+    public void clean() {
+        msgBubbleArrayList.clear();
+//        msgBubbleArrayList = new ArrayList<>();
+        notifyDataSetChanged();
+    }
+
     public void setSelectionLast() {
         selectedItemPos = getItemCount();
         notifyItemInserted(selectedItemPos);

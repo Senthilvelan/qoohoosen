@@ -49,18 +49,31 @@
                     android:focusable="false"
                     app:srcCompat="@drawable/ic_qoohoo_logo_white" />
             </io.supercharge.shimmerlayout.ShimmerLayout>
+
+
         </RelativeLayout>
     </androidx.appcompat.widget.Toolbar>
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/buttonClean"
+        android:layout_width="80dp"
+        android:layout_height="40dp"
+        android:layout_below="@+id/toolbarHome"
+        android:layout_marginEnd="8dp"
+        android:layout_alignParentRight="true"
+        android:background="?attr/selectableItemBackground"
+        android:textColor="@color/white_trans1"
+        android:text="Clean" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewMsgBubble"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/toolbarHome"
+        android:layout_below="@id/buttonClean"
         android:clipToPadding="false"
-        android:paddingEnd="16dp"
-        android:paddingStart="16dp"
         android:padding="0dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
         android:scrollbars="none" />
 
 
