@@ -6,10 +6,10 @@ import android.os.Parcel
 import android.os.Parcelable
 import android.util.AttributeSet
 import android.view.View
-import android.widget.FrameLayout
+import android.widget.LinearLayout
 import androidx.customview.view.AbsSavedState
 
-class GlassView : FrameLayout {
+class GlassView : LinearLayout {
     var cornerRadius: Float = DEFAULT_CORNER_RADIUS
         set(value) {
             field = value
@@ -43,12 +43,18 @@ class GlassView : FrameLayout {
 
     @Suppress("MayBeConstant")
     companion object {
-        val DEFAULT_CORNER_RADIUS = 25f
+        val DEFAULT_CORNER_RADIUS = 8f
+        val DEFAULT_PADDING = 2f
+        val DEFAULT_SHADOW_OPACITY = 0.05f
+        val DEFAULT_SURFACE_OPACITY = 0.05f
+        val DEFAULT_BORDER_OPACITY = 0.09f
+        val DEFAULT_BORDER_WIDTH = 2f
+/*        val DEFAULT_CORNER_RADIUS = 25f
         val DEFAULT_PADDING = 24f
         val DEFAULT_SHADOW_OPACITY = 0.19f
         val DEFAULT_SURFACE_OPACITY = 0.15f
         val DEFAULT_BORDER_OPACITY = 0.28f
-        val DEFAULT_BORDER_WIDTH = 3f
+        val DEFAULT_BORDER_WIDTH = 3f*/
     }
 
     private val surfacePaint = Paint().apply {

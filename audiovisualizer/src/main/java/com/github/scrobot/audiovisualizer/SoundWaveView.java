@@ -85,11 +85,11 @@ public class SoundWaveView extends FrameLayout implements SoundViewPlayerOnPlayL
     }
 
 
-    public void addAudioFileUrl(String audioFileUrl) throws IOException {
-        player.setAudioSource(audioFileUrl);
-
-        visualizerBar.updateVisualizer(audioFileUrl);
-    }
+//    public void addAudioFileUrl(String audioFileUrl) throws IOException {
+//        player.setAudioSource(audioFileUrl);
+//
+//        visualizerBar.updateVisualizer(audioFileUrl);
+//    }
 
     protected void init(final Context context) {
         View view = LayoutInflater.from(context).inflate(layout, this);

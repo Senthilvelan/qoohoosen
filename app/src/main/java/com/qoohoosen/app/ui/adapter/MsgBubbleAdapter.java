@@ -3,6 +3,7 @@ package com.qoohoosen.app.ui.adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,9 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.transition.Slide;
+import androidx.transition.Transition;
+import androidx.transition.TransitionManager;
 
 import com.github.scrobot.audiovisualizer.SoundWaveView;
 import com.qoohoosen.app.R;
@@ -34,6 +38,7 @@ public class MsgBubbleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private int selectedItemPos = -1;
     private int lastItemSelectedPos = -1;
     private Intent intent;
+//    protected SoundViewPlayer soundViewPlayer = new DefaultSoundViewPlayer();
 
     public MsgBubbleAdapter(Context context) {
         this.context = context;
@@ -43,6 +48,11 @@ public class MsgBubbleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     public void add(MsgBubble message) {
         msgBubbleArrayList.add(message);
         notifyItemInserted(msgBubbleArrayList.lastIndexOf(message));
+    }
+
+    public void setSelectionLast() {
+        selectedItemPos = getItemCount();
+        notifyItemInserted(selectedItemPos);
     }
 
     @NonNull
@@ -71,6 +81,7 @@ public class MsgBubbleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     }
 
+
     public class MessageViewHolder extends RecyclerView.ViewHolder {
 
         public TextView textViewTitle;
@@ -91,66 +102,38 @@ public class MsgBubbleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         }
 
 
-        public synchronized void removeUpdateWave(String path) {
-
-            try {
-                soundWaveView.clearMediaplayer();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            soundWaveView.setVisibility(View.GONE);
-//            soundWaveView.getVisualizerBar().setVisibility(View.GONE);
-        }
-
-
-        public void updateWave(String path) {
-            try {
-                Uri uri = Uri.fromFile(new File(path));
-                if (soundWaveView != null) {
-                    soundWaveView.setVisibility(View.VISIBLE);
-                    soundWaveView.addAudioFileUri(uri);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
         @Override
         public String toString() {
             return super.toString();
         }
 
-        public void bind(final MsgBubble message, int adapterPosition) {
+        public void bind(final MsgBubble message, final int adapterPosition) {
+            if (message == null)
+                return;
+
             if (message.type == MsgBubble.TYPE_AUDIO) {
-                textViewTitle.setText(String.format("Recording #%s", String.valueOf(message.index)));
-                textViewDescription.setText(message.path);
+                textViewTitle.setText(String.format("Recording #%s",
+                        String.valueOf(message.index)));
             } else if (message.type == MsgBubble.TYPE_TEXT) {
                 textViewDescription.setText(message.text);
             } else
                 textViewDescription.setText("");
 
             if (adapterPosition == selectedItemPos) {
-                selectedItem(message.path, audio_button_play);
-                //updateWave(message.path);
-                updateWave(message.path);
+                selectedItem(frameWaves, soundWaveView, audio_button_play,
+                        message.path, adapterPosition);
             } else {
-                defaultItem(audio_button_play);
-                removeUpdateWave(message.path);
+                defaultItem(frameWaves, soundWaveView, audio_button_play,
+                        message.path, adapterPosition);
             }
-
-//            audio_button_play.setVisibility(View.INVISIBLE);
-            textViewDescription.setVisibility(View.GONE);
 
             audio_button_play.setOnClickListener(new DebounceClickListener(v -> {
                 selectedItemPos = adapterPosition;
+
                 if (contentPlaying.length() <= 0) {
-                    selectedItem(message.path, v);
-//                    soundWaveView.getActionButton().performClick();
-                    updateWave(message.path);
+                    selectedItem(frameWaves, soundWaveView, v, message.path, adapterPosition);
                 } else {
-                    defaultItem(v);
-                    removeUpdateWave(message.path);
+                    defaultItem(frameWaves, soundWaveView, v, message.path, adapterPosition);
                 }
 
                 if (lastItemSelectedPos == selectedItemPos)
@@ -164,31 +147,74 @@ public class MsgBubbleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 }
                 notifyItemChanged(selectedItemPos);
 
-//                soundWaveView.toggle();
-
-            }));
+            }, 50L));
 
 
         }
     }//eof bind
 
-    private void defaultItem(View v) {
+    private void defaultItem(ViewGroup viewGroup, SoundWaveView soundWaveView,
+                             View view, String path, int adapterPosition) {
         contentPlaying = "";
-        ((ImageView) v).setImageResource(android.R.drawable.ic_media_play);
+        ((ImageView) view).setImageResource(com.github.scrobot.audiovisualizer.R.drawable.ic_play);
+        removeUpdateWave(viewGroup, soundWaveView,
+                view, path, adapterPosition);
+        /*
+        Enable when service needs
         //Notification foreground
-//        context.stopService(intent);
+                context.stopService(intent);*/
+
+
     }//eof defaultItem
 
-    private void selectedItem(String path, View v) {
+
+    public synchronized void removeUpdateWave(ViewGroup viewGroup, SoundWaveView soundWaveView,
+                                              View view, String path, int adapterPosition) {
+
+        try {
+            soundWaveView.clearMediaplayer();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        toggleAnim(viewGroup, soundWaveView, View.GONE);
+
+    }//eof removeUpdateWave
+
+    private void selectedItem(ViewGroup viewGroup, SoundWaveView soundWaveView,
+                              View view, String path, int adapterPosition) {
         if (path != null && path.length() > 0) {
             contentPlaying = path;
-            ((ImageView) v).setImageResource(android.R.drawable.ic_media_pause);
-//            context.startService(intent
-//                    .putExtra(INTENT_PATH_AUDIO, contentPlaying));
-
-
+            ((ImageView) view)
+                    .setImageResource(com.github.scrobot.audiovisualizer.R.drawable.ic_pause);
+            updateWave(viewGroup, soundWaveView, path);
+            /*//Enable when service needs
+                        context.startService(intent
+                                .putExtra(INTENT_PATH_AUDIO, contentPlaying));*/
         }//eof if
     }//eof selectedItem
 
+    public void updateWave(ViewGroup parent, SoundWaveView view, String path) {
+        try {
+            Uri uri = Uri.fromFile(new File(path));
+            if (view != null) {
+                toggleAnim(parent, view, View.VISIBLE);
+                view.addAudioFileUri(uri);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }//eof updateWave
+
+    private void toggleAnim(ViewGroup parent, View view, int visibility) {
+//        Transition transition = new Fade();
+        Transition transition = new Slide(Gravity.BOTTOM);
+        transition.setDuration(1500L);
+        transition.addTarget(view);
+
+        TransitionManager.beginDelayedTransition(parent, transition);
+//        image.setVisibility(show ? View.VISIBLE : View.GONE);
+        view.setVisibility(visibility);
+
+    }//eof toggleAnim
 
 }

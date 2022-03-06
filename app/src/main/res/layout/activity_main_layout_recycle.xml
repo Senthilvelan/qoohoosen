@@ -58,7 +58,9 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/toolbarHome"
         android:clipToPadding="false"
-        android:padding="16dp"
+        android:paddingEnd="16dp"
+        android:paddingStart="16dp"
+        android:padding="0dp"
         android:scrollbars="none" />
 
 

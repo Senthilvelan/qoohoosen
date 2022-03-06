@@ -215,10 +215,17 @@ public class MainActivity extends AppCompatActivity implements
 
         int recordTime = (int) ((System.currentTimeMillis() / (TIMER_1000)) - time);
 
-        if (recordTime > MIN_RECORD_TIME_THRESHOLD)
-            msgBubbleAdapter.add(new MsgBubble(msgBubbleAdapter.getItemCount() + 1,
+        if (recordTime > MIN_RECORD_TIME_THRESHOLD && msgBubbleAdapter != null) {
+
+            int size = msgBubbleAdapter.getItemCount();
+
+            msgBubbleAdapter.add(new MsgBubble(size + 1,
                     recordTime, onGoingFile));
-        else
+            msgBubbleAdapter.setSelectionLast();
+
+            if (recyclerViewMsgBubble != null)
+                recyclerViewMsgBubble.smoothScrollToPosition(size);
+        } else
             Utilities.showSnackBar(recyclerViewMsgBubble, "Not a valid audio !");
 
 

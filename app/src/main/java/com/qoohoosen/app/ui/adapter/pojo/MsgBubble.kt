@@ -16,6 +16,9 @@ class MsgBubble {
     @JvmField
     var index = 0
 
+    @JvmField
+    var isExpandPlay = false
+
     constructor(text: String?) {
         this.text = text
         type = TYPE_TEXT
