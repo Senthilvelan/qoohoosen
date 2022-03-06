@@ -107,6 +107,11 @@ public class SoundWaveView extends FrameLayout implements SoundViewPlayerOnPlayL
         actionButton.setOnClickListener(v -> player.toggle());
     }
 
+    public void toggle() {
+        if (player != null)
+            player.toggle();
+    }
+
 
     @Override
     public void onDurationProgress(SoundViewPlayer player, Long duration, Long currentTimestamp) {
@@ -134,6 +139,42 @@ public class SoundWaveView extends FrameLayout implements SoundViewPlayerOnPlayL
         actionButton.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_play));
         visualizerBar.updatePlayerPercent(0);
 
+    }
+
+    public SoundViewPlayer getPlayer() {
+        return player;
+    }
+
+    public SoundVisualizerBarView getVisualizerBar() {
+        return visualizerBar;
+    }
+
+    public void setVisualizerBar(SoundVisualizerBarView visualizerBar) {
+        this.visualizerBar = visualizerBar;
+    }
+
+    public TextView getTimer() {
+        return timer;
+    }
+
+    public void setTimer(TextView timer) {
+        this.timer = timer;
+    }
+
+    public ImageView getActionButton() {
+        return actionButton;
+    }
+
+    public void setActionButton(ImageView actionButton) {
+        this.actionButton = actionButton;
+    }
+
+    public AtomicInteger getDuration() {
+        return duration;
+    }
+
+    public void setDuration(AtomicInteger duration) {
+        this.duration = duration;
     }
 
     public interface SoundWaveOnCompleteListener {
