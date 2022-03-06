@@ -53,9 +53,13 @@ public abstract class AbstractRecorder implements Recorder {
 
     @Override
     public void stopRecording() throws IOException {
-        pullTransport.stop();
-        outputStream.flush();
-        outputStream.close();
+        if (pullTransport != null)
+            pullTransport.stop();
+        if (outputStream != null) {
+            outputStream.flush();
+            outputStream.close();
+        }
+
     }
 
     @Override

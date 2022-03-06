@@ -60,6 +60,9 @@ public class BottomTextRecordView {
     private View layoutLock;
     private View layoutEffect1;
     private View layoutEffect2;
+    private View linearLayoutMic;
+    private ImageView imageAudioAnimate;
+
     private EditText editTextMessage;
     private TextView timeText;
     private TextView textViewSlide;
@@ -70,7 +73,7 @@ public class BottomTextRecordView {
     private ImageView send;
 
     //Anims
-    private Animation animBlink;
+//    private Animation animBlink;
     private Animation animJump;
     private Animation animJumpFast;
 
@@ -146,6 +149,8 @@ public class BottomTextRecordView {
         timeText = view.findViewById(R.id.textViewTime);
         layoutSlideCancel = view.findViewById(R.id.layoutSlideCancel);
         layoutEffect2 = view.findViewById(R.id.layoutEffect2);
+        linearLayoutMic = view.findViewById(R.id.linearLayoutMic);
+        imageAudioAnimate = view.findViewById(R.id.imageAudioAnimate);
         layoutEffect1 = view.findViewById(R.id.layoutEffect1);
         layoutLock = view.findViewById(R.id.layoutLock);
         imageViewMic = view.findViewById(R.id.imageViewMic);
@@ -157,8 +162,8 @@ public class BottomTextRecordView {
         dp = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1,
                 view.getContext().getResources().getDisplayMetrics());
 
-        animBlink = AnimationUtils.loadAnimation(view.getContext(),
-                R.anim.blink);
+//        animBlink = AnimationUtils.loadAnimation(view.getContext(),
+//                R.anim.blink);
         animJump = AnimationUtils.loadAnimation(view.getContext(),
                 R.anim.jump);
         animJumpFast = AnimationUtils.loadAnimation(view.getContext(),
@@ -459,6 +464,9 @@ public class BottomTextRecordView {
             timeText.setVisibility(View.INVISIBLE);
             imageViewMic.setVisibility(View.INVISIBLE);
             editTextMessage.setVisibility(View.VISIBLE);
+            layoutMessage.setVisibility(View.VISIBLE);
+            imageAudioAnimate.setVisibility(View.GONE);
+            imageViewEmoji.setVisibility(View.VISIBLE);
 
             imageViewStop.setVisibility(View.GONE);
             editTextMessage.requestFocus();
@@ -476,11 +484,15 @@ public class BottomTextRecordView {
 //        if (!isRecordPermissionGranted())
 //            return;
 
-
         if (recordingListener != null)
             recordingListener.onRecordingStarted();
 
         stopTrackingAction = false;
+
+        linearLayoutMic.setVisibility(View.VISIBLE);
+        imageAudioAnimate.setVisibility(View.VISIBLE);
+        layoutMessage.setVisibility(View.INVISIBLE);
+
         editTextMessage.setVisibility(View.INVISIBLE);
         imageViewEmoji.setVisibility(View.INVISIBLE);
         imageViewAudio.animate().scaleXBy(1f).scaleYBy(1f)
@@ -495,7 +507,7 @@ public class BottomTextRecordView {
         layoutEffect2.setVisibility(View.VISIBLE);
         layoutEffect1.setVisibility(View.VISIBLE);
 
-        timeText.startAnimation(animBlink);
+//        timeText.startAnimation(animBlink);
         imageViewLockArrow.clearAnimation();
         imageViewLock.clearAnimation();
         imageViewLockArrow.startAnimation(animJumpFast);
@@ -538,7 +550,7 @@ public class BottomTextRecordView {
                 .rotation(180)
                 .scaleXBy(0.6f)
                 .scaleYBy(0.6f)
-                .setDuration(500)
+                .setDuration(1000)
                 .setInterpolator(new DecelerateInterpolator())
                 .setListener(new Animator.AnimatorListener() {
 
@@ -557,11 +569,11 @@ public class BottomTextRecordView {
                         dustin_cover.setTranslationX(displacement);
 
                         dustin_cover.animate().translationX(0).rotation(-120)
-                                .setDuration(350).setInterpolator(new DecelerateInterpolator())
+                                .setDuration(700).setInterpolator(new DecelerateInterpolator())
                                 .start();
 
                         dustin.animate().translationX(0)
-                                .setDuration(350)
+                                .setDuration(700)
                                 .setInterpolator(new DecelerateInterpolator())
                                 .setListener(new Animator.AnimatorListener() {
                                     @Override
@@ -591,7 +603,7 @@ public class BottomTextRecordView {
                     public void onAnimationEnd(Animator animation) {
                         imageViewMic.animate().translationY(0)
                                 .scaleX(1).scaleY(1)
-                                .setDuration(350)
+                                .setDuration(700)
                                 .setInterpolator(new LinearInterpolator()).setListener(
                                 new Animator.AnimatorListener() {
                                     @Override
@@ -613,13 +625,13 @@ public class BottomTextRecordView {
                                         }
 
                                         dustin_cover.animate().rotation(0)
-                                                .setDuration(150).setStartDelay(50).start();
+                                                .setDuration(300).setStartDelay(50).start();
                                         dustin.animate().translationX(displacement)
-                                                .setDuration(200).setStartDelay(250)
+                                                .setDuration(400).setStartDelay(250)
                                                 .setInterpolator(new DecelerateInterpolator())
                                                 .start();
                                         dustin_cover.animate().translationX(displacement)
-                                                .setDuration(200).setStartDelay(250)
+                                                .setDuration(400).setStartDelay(250)
                                                 .setInterpolator(new DecelerateInterpolator())
                                                 .setListener(new Animator.AnimatorListener() {
                                                     @Override
@@ -631,6 +643,8 @@ public class BottomTextRecordView {
                                                     public void onAnimationEnd(Animator animation) {
                                                         editTextMessage.setVisibility(View.VISIBLE);
                                                         editTextMessage.requestFocus();
+                                                        layoutMessage.setVisibility(View.VISIBLE);
+                                                        imageAudioAnimate.setVisibility(View.GONE);
                                                     }
 
                                                     @Override
@@ -672,7 +686,7 @@ public class BottomTextRecordView {
 
 
     public void animateRecordButton(final float maxPeak) {
-        imageViewMic.animate().scaleX(1 + maxPeak).scaleY(1 + maxPeak).setDuration(10).start();
+        imageAudioAnimate.animate().scaleX(1 + maxPeak).scaleY(1 + maxPeak).setDuration(40L).start();
     }
 
     private boolean isRecordPermissionGranted() {
