@@ -56,14 +56,15 @@
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/buttonClean"
-        android:layout_width="80dp"
+        android:layout_width="wrap_content"
         android:layout_height="40dp"
         android:layout_below="@+id/toolbarHome"
-        android:layout_marginEnd="8dp"
         android:layout_alignParentRight="true"
+        android:layout_marginEnd="8dp"
         android:background="?attr/selectableItemBackground"
-        android:textColor="@color/white_trans1"
-        android:text="Clean" />
+        android:text="Clean"
+        android:textAllCaps="false"
+        android:textColor="@color/white_trans1" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewMsgBubble"

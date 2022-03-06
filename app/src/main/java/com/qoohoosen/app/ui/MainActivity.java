@@ -105,16 +105,30 @@ public class MainActivity extends AppCompatActivity implements
         bottomTextRecordView.setRecordPermissionHandler(this);
 
         getListOfFiles();
-        buttonClean.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                try {
-                    clearFiles();
-                } catch (Exception e) {
-                    debug(e.toString());
-                }
+        buttonClean.setOnClickListener(v -> {
+            try {
+                clearFiles();
+                checkRecyclerItems();
+            } catch (Exception e) {
+                debug(e.toString());
             }
         });
+
+        checkRecyclerItems();
+
+
+    }
+
+    private void checkRecyclerItems() {
+        buttonClean.setText("Clean");
+
+        if (msgBubbleAdapter != null) {
+            if (msgBubbleAdapter.getItemCount() <= 0)
+                buttonClean.setText("Long press the mic to record audio!");
+        } else {
+            buttonClean.setText("Long press the mic to record audio!");
+        }
+
     }
 
     private void permissionChecking() {
@@ -239,6 +253,8 @@ public class MainActivity extends AppCompatActivity implements
 
             if (recyclerViewMsgBubble != null)
                 recyclerViewMsgBubble.smoothScrollToPosition(size);
+            checkRecyclerItems();
+
         } else
             Utilities.showSnackBar(recyclerViewMsgBubble, "Not a valid audio !");
 
@@ -363,6 +379,7 @@ public class MainActivity extends AppCompatActivity implements
 
 
     }//eof clearFiles
+
 
 //    private synchronized void showToast(String message) {
 //        Toast toast = Toast.makeText(this, message, Toast.LENGTH_SHORT);
