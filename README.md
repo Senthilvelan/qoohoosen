@@ -21,7 +21,7 @@ App works fine for the demo, which takes care the quality of the sound, UX, UI, 
 #### Added audio waves when its playing, with animation, made pause button brighter than play button for easy identification for playing item
 #### When the user press the mic for recordring, Textbox (Edittext) for text messsage is irrelevent to show,
 #### So the whole bottom sheet covered by the audio animation, to make more focus on audio rec
-#### After adding  new record, the focus goes to the new item in the recycler
+#### After adding  new record, the focus goes to the new item in the recycler, added animation, clean option, major bugs are fixed, minor bugs are there,
 
 For next level : can add https://github.com/android/user-interface-samples for bubble chat
 
