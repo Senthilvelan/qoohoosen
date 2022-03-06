@@ -16,6 +16,8 @@ public interface SoundViewPlayer {
     public void setAudioSource(Context context, Uri uri) throws IOException;
     public void setAudioSource(String url) throws IOException;
 
+    public void clearMediaplayer() throws IOException;
+
     public void play();
     public void pause();
     public void stop();

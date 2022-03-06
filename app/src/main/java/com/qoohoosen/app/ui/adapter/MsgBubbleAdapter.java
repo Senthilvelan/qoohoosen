@@ -25,7 +25,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class MsgBubbleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class MsgBubbleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
+        implements SoundWaveView.SoundWaveOnCompleteListener {
 
     private final List<MsgBubble> msgBubbleArrayList = new ArrayList<>();
     private Context context;
@@ -65,6 +66,11 @@ public class MsgBubbleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         return msgBubbleArrayList.size();
     }
 
+    @Override
+    public void onComplete(boolean isDone) {
+
+    }
+
     public class MessageViewHolder extends RecyclerView.ViewHolder {
 
         public TextView textViewTitle;
@@ -72,7 +78,7 @@ public class MsgBubbleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         public ImageView audio_button_play;
         public FrameLayout frameWaves;
         //        public SoundVisualizerBarView vWaveView;
-        public SoundWaveView vWaveView;
+        public SoundWaveView soundWaveView;
 
 
         public MessageViewHolder(View view) {
@@ -80,7 +86,7 @@ public class MsgBubbleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             textViewTitle = itemView.findViewById(R.id.textViewTitle);
             textViewDescription = itemView.findViewById(R.id.textViewDescription);
             audio_button_play = itemView.findViewById(R.id.audio_button_play);
-            vWaveView = itemView.findViewById(R.id.vWaveView);
+            soundWaveView = itemView.findViewById(R.id.vWaveView);
             frameWaves = itemView.findViewById(R.id.frameWaves);
 
         }
@@ -112,8 +118,15 @@ public class MsgBubbleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 //        }
 
         public synchronized void removeUpdateWave(String path) {
-            frameWaves.removeAllViews();
-            frameWaves.setVisibility(View.GONE);
+//            frameWaves.removeAllViews();
+//            frameWaves.setVisibility(View.GONE);
+            try {
+                soundWaveView.clearMediaplayer();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            soundWaveView.setVisibility(View.GONE);
 //            SoundWaveView vWaveView = new SoundWaveView(context);
 //            try {
 //                Uri uri = Uri.fromFile(new File(path));
@@ -134,11 +147,11 @@ public class MsgBubbleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             try {
                 Uri uri = Uri.fromFile(new File(path));
 //            vWaveView.addAudioFileUrl(file.getAbsolutePath());
-                if (vWaveView != null) {
-                    vWaveView.setVisibility(View.VISIBLE);
-                    vWaveView.addAudioFileUri(uri);
+                if (soundWaveView != null) {
+                    soundWaveView.setVisibility(View.VISIBLE);
+                    soundWaveView.addAudioFileUri(uri);
                 }
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
@@ -167,7 +180,7 @@ public class MsgBubbleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
         public void bind(final MsgBubble message, int adapterPosition) {
             if (message.type == MsgBubble.TYPE_AUDIO) {
-                textViewTitle.setText("   Recording #"+String.valueOf(message.index));
+                textViewTitle.setText(String.format("Recording #%s", String.valueOf(message.index)));
                 textViewDescription.setText(message.path);
             } else if (message.type == MsgBubble.TYPE_TEXT) {
                 textViewDescription.setText(message.text);
@@ -178,13 +191,13 @@ public class MsgBubbleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             if (adapterPosition == selectedItemPos) {
                 selectedItem(message.path, audio_button_play);
                 //updateWave(message.path);
+                updateWave(message.path);
             } else {
                 defaultItem(audio_button_play);
-                //removeUpdateWave(message.path);
+                removeUpdateWave(message.path);
             }
 
-            updateWave(message.path);
-            audio_button_play.setVisibility(View.INVISIBLE);
+//            audio_button_play.setVisibility(View.INVISIBLE);
             textViewDescription.setVisibility(View.GONE);
             audio_button_play.setOnClickListener(new DebounceClickListener(v -> {
                 selectedItemPos = adapterPosition;

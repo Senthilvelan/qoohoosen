@@ -30,6 +30,7 @@ public class SoundWaveView extends FrameLayout implements SoundViewPlayerOnPlayL
         SoundViewPlayerOnPreparedListener,
         SoundViewPlayerOnCompleteListener {
 
+    private SoundWaveOnCompleteListener soundWaveOnCompleteListener;
     protected final Context context;
     protected SoundViewPlayer player = new DefaultSoundViewPlayer();
     protected int layout = R.layout.sounwave_view;
@@ -62,15 +63,27 @@ public class SoundWaveView extends FrameLayout implements SoundViewPlayerOnPlayL
         init(context);
     }
 
+//    public void setSoundWaveOnCompleteListener(){
+//        soundWaveOnCompleteListener
+//    }
+
     public void setPlayer(SoundViewPlayer player) {
         this.player = player;
     }
 
     public void addAudioFileUri(final Uri audioFileUri) throws IOException {
+//        player.preparePlayer();
         player.setAudioSource(context, audioFileUri);
-
         visualizerBar.updateVisualizer(audioFileUri);
     }
+
+    public void clearMediaplayer() throws IOException {
+        actionButton.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_play));
+//        visualizerBar.updatePlayerPercent(0);
+//        visualizerBar.clearAnimation();
+//        player.clearMediaplayer();
+    }
+
 
     public void addAudioFileUrl(String audioFileUrl) throws IOException {
         player.setAudioSource(audioFileUrl);
@@ -91,12 +104,7 @@ public class SoundWaveView extends FrameLayout implements SoundViewPlayerOnPlayL
         timer = view.findViewById(R.id.vTimer);
         actionButton = view.findViewById(R.id.vActionButton);
 
-        actionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                player.toggle();
-            }
-        });
+        actionButton.setOnClickListener(v -> player.toggle());
     }
 
 
@@ -125,5 +133,13 @@ public class SoundWaveView extends FrameLayout implements SoundViewPlayerOnPlayL
     public void onComplete(SoundViewPlayer player) {
         actionButton.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_play));
         visualizerBar.updatePlayerPercent(0);
+
     }
+
+    public interface SoundWaveOnCompleteListener {
+
+        public void onComplete(boolean isDone);
+
+    }
+
 }

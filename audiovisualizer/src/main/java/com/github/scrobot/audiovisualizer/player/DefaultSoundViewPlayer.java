@@ -10,7 +10,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class DefaultSoundViewPlayer implements SoundViewPlayer {
 
-    private final MediaPlayer mediaPlayer = new MediaPlayer();
+    private MediaPlayer mediaPlayer = new MediaPlayer();
     private Handler handler = new Handler();
     private Runnable runnable;
     private AtomicLong durationCounter = new AtomicLong();
@@ -25,18 +25,19 @@ public class DefaultSoundViewPlayer implements SoundViewPlayer {
 
     @Override
     public void preparePlayer() {
+
+        if (mediaPlayer == null)
+            mediaPlayer = new MediaPlayer();
+
+
         mediaPlayer.prepareAsync();
-        mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-            @Override
-            public void onPrepared(MediaPlayer mp) {
-                onPrepariedListener.onPrepared(DefaultSoundViewPlayer.this);
-            }
-        });
+        mediaPlayer.setOnPreparedListener(mp -> onPrepariedListener.onPrepared(DefaultSoundViewPlayer.this));
 
         runnable = new Runnable() {
             @Override
             public void run() {
-                onDurationListener.onDurationProgress(DefaultSoundViewPlayer.this, getDuration(), durationCounter.addAndGet(INTERVAL));
+                onDurationListener.onDurationProgress(DefaultSoundViewPlayer.this,
+                        getDuration(), durationCounter.addAndGet(INTERVAL));
 
                 if (mediaPlayer.isPlaying()) {
                     handler.postDelayed(this, INTERVAL);
@@ -44,22 +45,16 @@ public class DefaultSoundViewPlayer implements SoundViewPlayer {
             }
         };
 
-        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(MediaPlayer mp) {
-                onCompleteListener.onComplete(DefaultSoundViewPlayer.this);
-
-                durationCounter.set(0);
-
-                handler.removeCallbacks(runnable);
-            }
+        mediaPlayer.setOnCompletionListener(mp -> {
+            onCompleteListener.onComplete(DefaultSoundViewPlayer.this);
+            durationCounter.set(0);
+            handler.removeCallbacks(runnable);
         });
     }
 
     @Override
     public SoundViewPlayer setOnPrepariedListener(SoundViewPlayerOnPreparedListener onPrepariedListener) {
         this.onPrepariedListener = onPrepariedListener;
-
         return this;
     }
 
@@ -93,21 +88,57 @@ public class DefaultSoundViewPlayer implements SoundViewPlayer {
 
     @Override
     public void setAudioSource(Context context, Uri uri) throws IOException {
-        mediaPlayer.setDataSource(context, uri);
+        if (mediaPlayer == null)
+            mediaPlayer = new MediaPlayer();
 
+        mediaPlayer.setDataSource(context, uri);
         preparePlayer();
     }
 
     @Override
     public void setAudioSource(String url) throws IOException {
-        mediaPlayer.setDataSource(url);
+        if (mediaPlayer == null)
+            mediaPlayer = new MediaPlayer();
 
+        mediaPlayer.setDataSource(url);
         preparePlayer();
+    }
+
+/*    @Override
+    public void removeAudioSource(Context context, Uri uri) throws IOException {
+        if (mediaPlayer != null) {
+            mediaPlayer.stop();
+            mediaPlayer.release();
+            mediaPlayer = null;
+        }
+
+    }
+
+    @Override
+    public void removeAudioSource(String url) throws IOException {
+        if (mediaPlayer != null) {
+            mediaPlayer.stop();
+            mediaPlayer.release();
+            mediaPlayer = null;
+        }
+    }*/
+
+    @Override
+    public void clearMediaplayer() {
+        if (mediaPlayer != null) {
+            mediaPlayer.stop();
+            mediaPlayer.release();
+            mediaPlayer = null;
+        }
     }
 
     @Override
     public void play() {
-        mediaPlayer.start();
+        if (mediaPlayer != null) {
+//            if (mediaPlayer.isPlaying())
+//                mediaPlayer.stop();
+            mediaPlayer.start();
+        }
         onPlayListener.onPlay(this);
 
         handler.postDelayed(runnable, INTERVAL);
@@ -115,13 +146,15 @@ public class DefaultSoundViewPlayer implements SoundViewPlayer {
 
     @Override
     public void pause() {
-        mediaPlayer.pause();
+        if (mediaPlayer != null)
+            mediaPlayer.pause();
         onPauseListener.onPause(this);
     }
 
     @Override
     public void stop() {
-        mediaPlayer.stop();
+        if (mediaPlayer != null)
+            mediaPlayer.stop();
         try {
             mediaPlayer.prepare();
             onPrepariedListener.onPrepared(this);
