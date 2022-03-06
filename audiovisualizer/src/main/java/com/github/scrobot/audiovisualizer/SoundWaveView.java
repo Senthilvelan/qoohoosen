@@ -103,7 +103,7 @@ public class SoundWaveView extends FrameLayout implements SoundViewPlayerOnPlayL
         visualizerBar = view.findViewById(R.id.vSoundBar);
         timer = view.findViewById(R.id.vTimer);
         actionButton = view.findViewById(R.id.vActionButton);
-
+        actionButton.setVisibility(VISIBLE);
         actionButton.setOnClickListener(v -> player.toggle());
     }
 

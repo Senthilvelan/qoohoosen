@@ -3,6 +3,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/relativeLayoutMsgInflater"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginStart="0dp"
@@ -103,7 +104,7 @@
         android:clickable="true"
         android:contentDescription="Audio play button"
         android:scaleType="fitXY"
-        android:visibility="visible"
+        android:visibility="gone"
         app:srcCompat="@drawable/ic_play" />
 
 </RelativeLayout>

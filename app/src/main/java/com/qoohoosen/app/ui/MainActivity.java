@@ -319,7 +319,7 @@ public class MainActivity extends AppCompatActivity implements
     private void getListOfFiles() {
         File[] dirFiles = getFilesDir().listFiles();
         if (dirFiles != null && dirFiles.length != 0) {
-            int index = 1;
+            int index = 0;
             for (File dirFile : dirFiles) {
                 String fileOutput = dirFile.toString();
                 if (!fileOutput.isEmpty()) {

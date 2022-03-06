@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -37,6 +38,8 @@ public class MsgBubbleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private static String contentPlaying = "";
     private int selectedItemPos = -1;
     private int lastItemSelectedPos = -1;
+//    private MsgBubble lastSelectedMsg;
+
     private Intent intent;
 //    protected SoundViewPlayer soundViewPlayer = new DefaultSoundViewPlayer();
 
@@ -66,7 +69,7 @@ public class MsgBubbleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
 
-        ((MessageViewHolder) holder).bind(msgBubbleArrayList.get(position), position);
+        ((MessageViewHolder) holder).bind(msgBubbleArrayList.get(position),position);
     }
 
     @Override
@@ -89,6 +92,7 @@ public class MsgBubbleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         public ImageView audio_button_play;
         public FrameLayout frameWaves;
         public SoundWaveView soundWaveView;
+        public RelativeLayout relativeLayoutMsgInflater;
 
 
         public MessageViewHolder(View view) {
@@ -98,7 +102,7 @@ public class MsgBubbleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             audio_button_play = itemView.findViewById(R.id.audio_button_play);
             soundWaveView = itemView.findViewById(R.id.vWaveView);
             frameWaves = itemView.findViewById(R.id.frameWaves);
-
+            relativeLayoutMsgInflater = itemView.findViewById(R.id.relativeLayoutMsgInflater);
         }
 
 
@@ -107,49 +111,62 @@ public class MsgBubbleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             return super.toString();
         }
 
-        public void bind(final MsgBubble message, final int adapterPosition) {
-            if (message == null)
+        public void bind(MsgBubble msgBubble, final int adapterPosition) {
+
+
+            if (msgBubble == null)
                 return;
 
-            if (message.type == MsgBubble.TYPE_AUDIO) {
+            if (msgBubble.type == MsgBubble.TYPE_AUDIO) {
                 textViewTitle.setText(String.format("Recording #%s",
-                        String.valueOf(message.index)));
-            } else if (message.type == MsgBubble.TYPE_TEXT) {
-                textViewDescription.setText(message.text);
+                        String.valueOf(msgBubble.index +1)));
+            } else if (msgBubble.type == MsgBubble.TYPE_TEXT) {
+                textViewDescription.setText(msgBubble.text);
             } else
                 textViewDescription.setText("");
 
             if (adapterPosition == selectedItemPos) {
                 selectedItem(frameWaves, soundWaveView, audio_button_play,
-                        message.path, adapterPosition);
+                        msgBubble.path, adapterPosition);
             } else {
                 defaultItem(frameWaves, soundWaveView, audio_button_play,
-                        message.path, adapterPosition);
+                        msgBubble.path, adapterPosition);
             }
 
-            audio_button_play.setOnClickListener(new DebounceClickListener(v -> {
+
+            relativeLayoutMsgInflater.setOnClickListener(new DebounceClickListener(v -> {
                 selectedItemPos = adapterPosition;
-
-                if (contentPlaying.length() <= 0) {
-                    selectedItem(frameWaves, soundWaveView, v, message.path, adapterPosition);
-                } else {
-                    defaultItem(frameWaves, soundWaveView, v, message.path, adapterPosition);
-                }
-
+//                if (contentPlaying.length() <= 0) {
+//                    selectedItem(frameWaves, soundWaveView, v, message.path, adapterPosition);
+//                } else {
+//                    defaultItem(frameWaves, soundWaveView, v, message.path, adapterPosition);
+//                }
                 if (lastItemSelectedPos == selectedItemPos)
                     return;
 
-                if (lastItemSelectedPos == -1)
+//                message.isExpandPlay = true;
+//                msgBubbleArrayList.add(message.index, message);
+
+                if (lastItemSelectedPos == -1) {
                     lastItemSelectedPos = selectedItemPos;
-                else {
+//                    lastSelectedMsg = message;
+                } else {
+//                    lastSelectedMsg.isExpandPlay = false;
+//                    msgBubbleArrayList.add(lastSelectedMsg.index, lastSelectedMsg);
                     notifyItemChanged(lastItemSelectedPos);
                     lastItemSelectedPos = selectedItemPos;
+//                    lastSelectedMsg = message;
                 }
                 notifyItemChanged(selectedItemPos);
+
 
             }, 50L));
 
 
+//            if (message.isExpandPlay)
+//                soundWaveView.getPlayer().play();
+//            else
+//                soundWaveView.getPlayer().pause();
         }
     }//eof bind
 
