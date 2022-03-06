@@ -4,7 +4,9 @@ import android.app.Activity
 import android.content.Context
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import com.google.android.material.snackbar.Snackbar
 import java.io.*
+
 
 object Utilities {
     @JvmStatic
@@ -31,5 +33,13 @@ object Utilities {
             e.printStackTrace()
         }
         return bytes
+    }
+
+    @JvmStatic
+    fun showSnackBar(view: View, msg: String) {
+        val snackbar = Snackbar
+            .make(view, msg, Snackbar.LENGTH_LONG)
+        snackbar.show()
+
     }
 }

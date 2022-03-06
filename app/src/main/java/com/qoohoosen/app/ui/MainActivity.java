@@ -18,9 +18,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -46,6 +44,7 @@ import com.qoohoosen.recorder.PullTransport;
 import com.qoohoosen.recorder.PullableSource;
 import com.qoohoosen.recorder.Recorder;
 import com.qoohoosen.utils.AudioTinyPlayer;
+import com.qoohoosen.utils.Utilities;
 import com.qoohoosen.widget.BottomTextRecordView;
 
 import java.io.File;
@@ -190,7 +189,6 @@ public class MainActivity extends AppCompatActivity implements
         if (!isPermissionGranted()) {
             return;
         }
-        showToast("started");
         debug("started");
         if (recorder == null) {
             startInitRecorder();
@@ -205,7 +203,6 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onRecordingLocked() {
-        showToast("locked");
         debug("locked");
     }
 
@@ -221,6 +218,8 @@ public class MainActivity extends AppCompatActivity implements
         if (recordTime > MIN_RECORD_TIME_THRESHOLD)
             msgBubbleAdapter.add(new MsgBubble(msgBubbleAdapter.getItemCount() + 1,
                     recordTime, onGoingFile));
+        else
+            Utilities.showSnackBar(recyclerViewMsgBubble, "Not a valid audio !");
 
 
         try {
@@ -328,11 +327,11 @@ public class MainActivity extends AppCompatActivity implements
 
     }//eof getListOfFiles
 
-    private synchronized void showToast(String message) {
-        Toast toast = Toast.makeText(this, message, Toast.LENGTH_SHORT);
-        toast.setGravity(Gravity.CENTER, 0, 0);
-        toast.show();
-    }
+//    private synchronized void showToast(String message) {
+//        Toast toast = Toast.makeText(this, message, Toast.LENGTH_SHORT);
+//        toast.setGravity(Gravity.CENTER, 0, 0);
+//        toast.show();
+//    }
 
     private void debug(String log) {
         Log.d(TAG, log);
