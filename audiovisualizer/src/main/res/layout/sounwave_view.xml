@@ -19,7 +19,7 @@
         android:paddingBottom="8dp"
         android:text="00:00"
         android:textSize="@dimen/timer_text_size"
-        android:visibility="visible" />
+        android:visibility="invisible" />
 
 
     <com.github.scrobot.audiovisualizer.SoundVisualizerBarView
