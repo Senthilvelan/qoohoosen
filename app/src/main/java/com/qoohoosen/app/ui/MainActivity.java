@@ -79,12 +79,8 @@ public class MainActivity extends AppCompatActivity implements
 
         Toolbar toolbarHome = findViewById(R.id.toolbarHome);
         setSupportActionBar(toolbarHome);
-
         permissionChecking();
-
-//        setupNoiseRecorder();
         startInitRecorder();
-
 
         bottomTextRecordView = new BottomTextRecordView();
         bottomTextRecordView.initView(findViewById(R.id.viewRootMain));
@@ -99,8 +95,6 @@ public class MainActivity extends AppCompatActivity implements
 
         setUpRecycler();
 
-        //focus on mic
-//        bottomTextRecordView.getMessageView().requestFocus();
         bottomTextRecordView.setRecordingListener(this);
         bottomTextRecordView.setRecordPermissionHandler(this);
 
@@ -135,17 +129,12 @@ public class MainActivity extends AppCompatActivity implements
                 .withListener(new PermissionListener() {
                     @Override
                     public void onPermissionGranted(PermissionGrantedResponse response) {
-                        // permission is granted,start the process
                     }
 
                     @Override
                     public void onPermissionDenied(PermissionDeniedResponse response) {
-                        // check for permanent denial of permission
-                        if (response.isPermanentlyDenied()) {
-                            // navigate user to app settings
+                        if (response.isPermanentlyDenied())
                             showSettingsDialog();
-
-                        }
                     }
 
                     @Override
@@ -186,27 +175,6 @@ public class MainActivity extends AppCompatActivity implements
             permissionChecking();
             return false;
         }
-
-
-//        boolean recordPermissionAvailable = false;
-//        try {
-//            recordPermissionAvailable = ContextCompat
-//                    .checkSelfPermission(MainActivity.this, Manifest.permission.RECORD_AUDIO)
-//                    == PERMISSION_GRANTED;
-//        } catch (Exception e) {
-//            debug(e.toString());
-//        }
-//
-//        if (recordPermissionAvailable)
-//            return true;
-//
-//        ActivityCompat.
-//                requestPermissions(MainActivity.this,
-//                        new String[]{Manifest.permission.RECORD_AUDIO},
-//                        0);
-//
-//
-//        return false;
     }
 
     @Override
@@ -255,8 +223,6 @@ public class MainActivity extends AppCompatActivity implements
 
         } else
             Utilities.showSnackBar(recyclerViewMsgBubble, "Not a valid audio !");
-
-
         try {
             if (recorder != null) {
                 AudioTinyPlayer.getAudioTinyPlayerInstance()
@@ -296,28 +262,6 @@ public class MainActivity extends AppCompatActivity implements
                 file());
     }
 
-
-//    private void setupNoiseRecorder() {
-//        recorder = OmRecorder.wav(
-//                new PullTransport.Noise(mic(),
-//                        new PullTransport.OnAudioChunkPulledListener() {
-//                            @Override
-//                            public void onAudioChunkPulled(AudioChunk audioChunk) {
-//                                animateVoice((float) (audioChunk.maxAmplitude() / 200.0));
-//                            }
-//                        },
-//                        new WriteAction.Default(),
-//                        new Recorder.OnSilenceListener() {
-//                            @Override
-//                            public void onSilence(long silenceTime) {
-//                                Log.e("silenceTime", String.valueOf(silenceTime));
-//                                Toast.makeText(MainActivity.this, "silence of " + silenceTime + " detected",
-//                                        Toast.LENGTH_SHORT).show();
-//                            }
-//                        }, 200
-//                ), file()
-//        );
-//    }
 
     private void animateVoice(final float maxPeak) {
         if (bottomTextRecordView != null)
@@ -364,7 +308,6 @@ public class MainActivity extends AppCompatActivity implements
 
 
     private void clearFiles() throws Exception {
-//        getFilesDir().delete();
         File[] dirFiles = getFilesDir().listFiles();
         if (dirFiles != null && dirFiles.length != 0) {
             for (File dirFile : dirFiles) {
@@ -372,18 +315,9 @@ public class MainActivity extends AppCompatActivity implements
                     dirFile.delete();
             }//eof for
         }//eof if
-
         msgBubbleAdapter.clean();
 
-
     }//eof clearFiles
-
-
-//    private synchronized void showToast(String message) {
-//        Toast toast = Toast.makeText(this, message, Toast.LENGTH_SHORT);
-//        toast.setGravity(Gravity.CENTER, 0, 0);
-//        toast.show();
-//    }
 
     private void debug(String log) {
         Log.d(TAG, log);
@@ -404,7 +338,6 @@ public class MainActivity extends AppCompatActivity implements
 
     }
 
-    // navigating user to app settings
     private void openSettings() {
         try {
             Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
@@ -416,5 +349,25 @@ public class MainActivity extends AppCompatActivity implements
         }
 
     }
-
+//    private void setupNoiseRecorder() {
+//        recorder = OmRecorder.wav(
+//                new PullTransport.Noise(mic(),
+//                        new PullTransport.OnAudioChunkPulledListener() {
+//                            @Override
+//                            public void onAudioChunkPulled(AudioChunk audioChunk) {
+//                                animateVoice((float) (audioChunk.maxAmplitude() / 200.0));
+//                            }
+//                        },
+//                        new WriteAction.Default(),
+//                        new Recorder.OnSilenceListener() {
+//                            @Override
+//                            public void onSilence(long silenceTime) {
+//                                Log.e("silenceTime", String.valueOf(silenceTime));
+//                                Toast.makeText(MainActivity.this, "silence of " + silenceTime + " detected",
+//                                        Toast.LENGTH_SHORT).show();
+//                            }
+//                        }, 200
+//                ), file()
+//        );
+//    }
 }

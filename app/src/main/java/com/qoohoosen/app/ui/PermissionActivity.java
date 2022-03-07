@@ -40,16 +40,15 @@ public class PermissionActivity extends AppCompatActivity {
                 .withListener(new PermissionListener() {
                     @Override
                     public void onPermissionGranted(PermissionGrantedResponse response) {
-                        Intent intent = new Intent(PermissionActivity.this, MainActivity.class);
+                        Intent intent = new Intent(PermissionActivity.this,
+                                MainActivity.class);
                         startActivity(intent);
                         finish();
                     }
 
                     @Override
                     public void onPermissionDenied(PermissionDeniedResponse response) {
-                        // check for permanent denial of permission
                         if (response.isPermanentlyDenied()) {
-                            // navigate user to app settings
                             showSettingsDialog();
 
                         }
@@ -59,7 +58,6 @@ public class PermissionActivity extends AppCompatActivity {
                     public void onPermissionRationaleShouldBeShown(PermissionRequest permission,
                                                                    PermissionToken token) {
                         token.continuePermissionRequest();
-//                        permissionChecking();
                     }
                 }).check();
     }
@@ -78,7 +76,6 @@ public class PermissionActivity extends AppCompatActivity {
 
     }
 
-    // navigating user to app settings
     private void openSettings() {
         try {
             Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);

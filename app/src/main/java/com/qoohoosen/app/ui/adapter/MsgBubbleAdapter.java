@@ -37,10 +37,7 @@ public class MsgBubbleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private static String contentPlaying = "";
     private int selectedItemPos = -1;
     private int lastItemSelectedPos = -1;
-//    private MsgBubble lastSelectedMsg;
-
     private Intent intent;
-//    protected SoundViewPlayer soundViewPlayer = new DefaultSoundViewPlayer();
 
     public MsgBubbleAdapter(Context context) {
         this.context = context;
@@ -54,7 +51,6 @@ public class MsgBubbleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     public void clean() {
         msgBubbleArrayList.clear();
-//        msgBubbleArrayList = new ArrayList<>();
         notifyDataSetChanged();
     }
 
@@ -73,7 +69,6 @@ public class MsgBubbleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-
         ((MessageViewHolder) holder).bind(msgBubbleArrayList.get(position), position);
     }
 
@@ -146,37 +141,20 @@ public class MsgBubbleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
             relativeLayoutMsgInflater.setOnClickListener(new DebounceClickListener(v -> {
                 selectedItemPos = adapterPosition;
-//                if (contentPlaying.length() <= 0) {
-//                    selectedItem(frameWaves, soundWaveView, v, message.path, adapterPosition);
-//                } else {
-//                    defaultItem(frameWaves, soundWaveView, v, message.path, adapterPosition);
-//                }
                 if (lastItemSelectedPos == selectedItemPos)
                     return;
 
-//                message.isExpandPlay = true;
-//                msgBubbleArrayList.add(message.index, message);
-
                 if (lastItemSelectedPos == -1) {
                     lastItemSelectedPos = selectedItemPos;
-//                    lastSelectedMsg = message;
                 } else {
-//                    lastSelectedMsg.isExpandPlay = false;
-//                    msgBubbleArrayList.add(lastSelectedMsg.index, lastSelectedMsg);
                     notifyItemChanged(lastItemSelectedPos);
                     lastItemSelectedPos = selectedItemPos;
-//                    lastSelectedMsg = message;
                 }
                 notifyItemChanged(selectedItemPos);
 
 
             }, 50L));
 
-
-//            if (message.isExpandPlay)
-//                soundWaveView.getPlayer().play();
-//            else
-//                soundWaveView.getPlayer().pause();
         }
     }//eof bind
 
@@ -186,7 +164,6 @@ public class MsgBubbleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         ((ImageView) view).setImageResource(com.github.scrobot.audiovisualizer.R.drawable.ic_play);
         removeUpdateWave(viewGroup, soundWaveView,
                 view, path, adapterPosition);
-
         /*
         Enable when service needs
         //Notification foreground

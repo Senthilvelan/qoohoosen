@@ -14,7 +14,6 @@ public final class UtilsAnimation {
                 .setListener(new AnimatorListenerAdapter() {
                     @Override
                     public void onAnimationEnd(Animator animation) {
-                        // superfluous restoration
                         view.setVisibility(View.GONE);
                         view.setAlpha(1.f);
                         view.setTranslationY(0.f);
@@ -29,13 +28,7 @@ public final class UtilsAnimation {
         if (view.getHeight() > 0) {
             slideUpNow(view, duration);
         } else {
-            // wait till height is measured
-            view.post(new Runnable() {
-                @Override
-                public void run() {
-                    slideUpNow(view, duration);
-                }
-            });
+            view.post(() -> slideUpNow(view, duration));
         }
     }
 

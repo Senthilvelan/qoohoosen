@@ -45,7 +45,6 @@ dependencies {
     implementation project(path: ':lib:recorder')
     implementation project(path: ':lib:glass')
     implementation project(path: ':audiovisualizer')
-//    implementation 'ch.acra:acra:4.11.1'
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'

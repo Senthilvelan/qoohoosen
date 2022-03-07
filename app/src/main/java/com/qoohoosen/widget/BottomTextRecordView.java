@@ -506,18 +506,6 @@ public class BottomTextRecordView {
         imageViewAudio.animate().scaleXBy(1f).scaleYBy(1f)
                 .setDuration(200).setInterpolator(new OvershootInterpolator()).start();
 
-//        timeText.setVisibility(View.VISIBLE);
-//        layoutLock.setVisibility(View.VISIBLE);
-//        layoutSlideCancel.setVisibility(View.VISIBLE);
-
-        // imageAudioAnimate.setVisibility(View.VISIBLE);
-        // linearLayoutMic.setVisibility(View.VISIBLE);
-
-//        imageViewMic.setVisibility(View.VISIBLE);
-//        layoutEffect2.setVisibility(View.VISIBLE);
-//        layoutEffect1.setVisibility(View.VISIBLE);
-
-
         UtilsAnimation.slideUp(linearLayoutMic, 400L);
         UtilsAnimation.slideUp(imageAudioAnimate, 300L);
         UtilsAnimation.slideUp(timeText, 800L);

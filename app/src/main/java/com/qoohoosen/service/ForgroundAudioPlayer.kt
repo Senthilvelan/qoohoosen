@@ -17,7 +17,6 @@ import java.io.IOException
 
 
 class ForgroundAudioPlayer : Service() {
-    //Notification for ON-going
     private var iconNotification: Bitmap? = null
     private var notification: Notification? = null
     var mNotificationManager: NotificationManager? = null
