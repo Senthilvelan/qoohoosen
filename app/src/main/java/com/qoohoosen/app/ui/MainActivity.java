@@ -179,21 +179,13 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onRecordingStarted() {
-
         if (!isPermissionGranted()) {
             return;
         }
-        debug("started");
-        if (recorder == null) {
-            startInitRecorder();
-        } else {
-            AudioTinyPlayer.getAudioTinyPlayerInstance()
-                    .playTinyMusic(MainActivity.this, RECORD_START);
-            recorder.startRecording();
-        }
-
+        playRecordStart();
         time = System.currentTimeMillis() / (1000);
     }
+
 
     @Override
     public void onRecordingLocked() {
@@ -201,11 +193,10 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onRecordingCompleted() {
-        if (!isPermissionGranted()) {
-            return;
-        }
-        debug("completed");
+    public synchronized void onRecordingCompleted() {
+//        if (!isPermissionGranted()) {
+//            return;
+//        }
 
         int recordTime = (int) ((System.currentTimeMillis() / (TIMER_1000)) - time);
 
@@ -221,34 +212,25 @@ public class MainActivity extends AppCompatActivity implements
                 recyclerViewMsgBubble.smoothScrollToPosition(size);
             checkRecyclerItems();
 
-        } else
-            Utilities.showSnackBar(recyclerViewMsgBubble, "Not a valid audio !");
-        try {
-            if (recorder != null) {
-                AudioTinyPlayer.getAudioTinyPlayerInstance()
-                        .playTinyMusic(MainActivity.this, RECORD_COMPLETED);
-                recorder.stopRecording();
-                startInitRecorder();
+        }
+//        else
+//            Utilities.showSnackBar(recyclerViewMsgBubble, "Not a valid audio !");
 
-            }
+//        playRecordComplete();
+        try {
+            recorder.stopRecording();
         } catch (IOException e) {
             e.printStackTrace();
         }
+        startInitRecorder();
     }
+
 
     @Override
     public void onRecordingCanceled() {
-        debug("canceled");
-        try {
-            if (recorder != null) {
-                AudioTinyPlayer.getAudioTinyPlayerInstance()
-                        .playTinyMusic(MainActivity.this, RECORD_CANCEL);
-                recorder.stopRecording();
-                startInitRecorder();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+
+        playRecordCancel();
+
 
     }
 
@@ -349,6 +331,61 @@ public class MainActivity extends AppCompatActivity implements
         }
 
     }
+
+
+    private synchronized void playRecordStart() {
+
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                if (recorder == null) {
+//                    startInitRecorder();
+//                } else {
+//                    AudioTinyPlayer.getAudioTinyPlayerInstance()
+//                            .playTinyMusic(MainActivity.this, RECORD_START);
+//                    recorder.startRecording();
+//                }
+//            }
+//        }).start();
+    }
+
+
+    private synchronized void playRecordComplete() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    if (recorder != null) {
+                        AudioTinyPlayer.getAudioTinyPlayerInstance()
+                                .playTinyMusic(MainActivity.this, RECORD_COMPLETED);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
+
+    private synchronized void playRecordCancel() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                try {
+                    if (recorder != null) {
+                        AudioTinyPlayer.getAudioTinyPlayerInstance()
+                                .playTinyMusic(MainActivity.this, RECORD_CANCEL);
+                        recorder.stopRecording();
+                        startInitRecorder();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
+
+
 //    private void setupNoiseRecorder() {
 //        recorder = OmRecorder.wav(
 //                new PullTransport.Noise(mic(),

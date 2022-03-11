@@ -1,6 +1,7 @@
 package com.qoohoosen.widget;
 
 import static com.qoohoosen.utils.Constable.DEBOUNCE_INTERVAL;
+import static com.qoohoosen.utils.Constable.MIN_RECORD_TIME_THRESHOLD;
 import static com.qoohoosen.utils.Constable.TIMER_1000;
 
 import android.animation.Animator;
@@ -28,7 +29,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.qoohoosen.app.R;
-import com.qoohoosen.utils.Utilities;
 import com.qoohoosen.utils.UtilsAnimation;
 
 import java.text.SimpleDateFormat;
@@ -266,8 +266,6 @@ public class BottomTextRecordView {
 //            if (!isRecordPermissionGranted())
 //                return true;
 
-            Utilities.hideKeyPad(context, imageViewAudio);
-
             if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
 
 
@@ -413,6 +411,13 @@ public class BottomTextRecordView {
 
     private void stopRecording(RecordingBehaviour recordingBehaviour) {
 
+/*
+        int recordTime = (int) ((System.currentTimeMillis() / (TIMER_1000)) - startRecTime);
+
+        if (recordTime > MIN_RECORD_TIME_THRESHOLD) {
+
+        }*/
+
 //        if (!isRecordPermissionGranted())
 //            return;
 
@@ -448,7 +453,9 @@ public class BottomTextRecordView {
                 recordingListener.onRecordingLocked();
 
         } else if (recordingBehaviour == RecordingBehaviour.CANCELED) {
-            timeText.clearAnimation();
+
+
+//            timeText.clearAnimation();
             timeText.setVisibility(View.INVISIBLE);
             imageViewMic.setVisibility(View.INVISIBLE);
             imageViewStop.setVisibility(View.GONE);
@@ -461,37 +468,53 @@ public class BottomTextRecordView {
             if (recordingListener != null)
                 recordingListener.onRecordingCanceled();
 
+
         } else if (recordingBehaviour == RecordingBehaviour.RELEASED
                 || recordingBehaviour == RecordingBehaviour.LOCK_DONE) {
-            timeText.clearAnimation();
-            timeText.setVisibility(View.INVISIBLE);
-            imageViewMic.setVisibility(View.INVISIBLE);
-            editTextMessage.setVisibility(View.VISIBLE);
-            layoutMessage.setVisibility(View.VISIBLE);
+
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+//                    timeText.clearAnimation();
+                    timeText.setVisibility(View.INVISIBLE);
+                    imageViewMic.setVisibility(View.INVISIBLE);
+                    editTextMessage.setVisibility(View.VISIBLE);
+                    layoutMessage.setVisibility(View.VISIBLE);
 
 //            imageAudioAnimate.setVisibility(View.GONE);
 //            linearLayoutMic.setVisibility(View.INVISIBLE);
-            UtilsAnimation.slideDown(linearLayoutMic, 800L);
-            UtilsAnimation.slideDown(imageAudioAnimate, 500L);
+                    UtilsAnimation.slideDown(linearLayoutMic, 400L);
+                    UtilsAnimation.slideDown(imageAudioAnimate, 300L);
 
 
-            imageViewEmoji.setVisibility(View.VISIBLE);
+                    imageViewEmoji.setVisibility(View.VISIBLE);
 
-            imageViewStop.setVisibility(View.GONE);
-            editTextMessage.requestFocus();
-            layoutEffect2.setVisibility(View.GONE);
-            layoutEffect1.setVisibility(View.GONE);
+                    imageViewStop.setVisibility(View.GONE);
+                    editTextMessage.requestFocus();
+                    layoutEffect2.setVisibility(View.GONE);
+                    layoutEffect1.setVisibility(View.GONE);
 
-            timerTask.cancel();
+                    layoutSlideCancel.setVisibility(View.GONE);
+                    layoutLock.setVisibility(View.GONE);
 
-            if (recordingListener != null)
-                recordingListener.onRecordingCompleted();
+
+                    timerTask.cancel();
+                    audioTotalTime = 0;
+                    if (recordingListener != null)
+                        recordingListener.onRecordingCompleted();
+
+                }
+            }, 900L);
         }
     }
+
+//    long startRecTime;
 
     private void startRecord() {
 //        if (!isRecordPermissionGranted())
 //            return;
+
+//        startRecTime = System.currentTimeMillis();
 
         if (recordingListener != null)
             recordingListener.onRecordingStarted();
@@ -506,15 +529,15 @@ public class BottomTextRecordView {
         imageViewAudio.animate().scaleXBy(1f).scaleYBy(1f)
                 .setDuration(200).setInterpolator(new OvershootInterpolator()).start();
 
-        UtilsAnimation.slideUp(linearLayoutMic, 400L);
-        UtilsAnimation.slideUp(imageAudioAnimate, 300L);
-        UtilsAnimation.slideUp(timeText, 800L);
-        UtilsAnimation.slideUp(layoutLock, 600L);
-        UtilsAnimation.slideUp(layoutSlideCancel, 700L);
+        UtilsAnimation.slideUp(linearLayoutMic, 300L);
+        UtilsAnimation.slideUp(imageAudioAnimate, 200L);
+        UtilsAnimation.slideUp(timeText, 500L);
+        UtilsAnimation.slideUp(layoutLock, 400L);
+        UtilsAnimation.slideUp(layoutSlideCancel, 500L);
 
-        UtilsAnimation.slideUp(imageViewMic, 800L);
-        UtilsAnimation.slideUp(layoutEffect2, 800L);
-        UtilsAnimation.slideUp(layoutEffect1, 800L);
+        UtilsAnimation.slideUp(imageViewMic, 500L);
+        UtilsAnimation.slideUp(layoutEffect2, 500L);
+        UtilsAnimation.slideUp(layoutEffect1, 500L);
 
 
         shimmerLayoutSlide.startShimmerAnimation();
@@ -535,8 +558,9 @@ public class BottomTextRecordView {
             @Override
             public void run() {
                 handler.post(() -> {
-                    timeText.setText(timeFormatter.format(new Date(audioTotalTime * TIMER_1000)));
-                    audioTotalTime++;
+                    timeText.setText(timeFormatter
+                            .format(new Date((long) audioTotalTime * TIMER_1000)));
+                    audioTotalTime = audioTotalTime + 1;
                 });
             }
         };
@@ -659,9 +683,9 @@ public class BottomTextRecordView {
                                                         layoutMessage.setVisibility(View.VISIBLE);
 //                                                        imageAudioAnimate.setVisibility(View.GONE);
 //                                                        linearLayoutMic.setVisibility(View.INVISIBLE);
-                                                        UtilsAnimation.slideDown(linearLayoutMic, 800L);
-                                                        UtilsAnimation.slideDown(imageAudioAnimate, 500L);
-                                                        UtilsAnimation.slideDown(layoutLock,400L);
+                                                        UtilsAnimation.slideDown(linearLayoutMic, 400L);
+                                                        UtilsAnimation.slideDown(imageAudioAnimate, 300L);
+                                                        UtilsAnimation.slideDown(layoutLock, 350L);
 
                                                     }
 
