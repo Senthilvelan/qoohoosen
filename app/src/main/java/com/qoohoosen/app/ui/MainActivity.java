@@ -441,16 +441,16 @@ public class MainActivity extends AppCompatActivity implements
 //    }
 
 
-    public static class PlayTinyIntentService extends IntentService {
-
-
-        public PlayTinyIntentService() {
-            super(PlayTinyIntentService.class.getSimpleName().toString());
-        }
-
-        @Override
-        protected void onHandleIntent(@Nullable Intent intent) {
-
-        }
-    }
+//    public static class PlayTinyIntentService extends IntentService {
+//
+//
+//        public PlayTinyIntentService() {
+//            super(PlayTinyIntentService.class.getSimpleName().toString());
+//        }
+//
+//        @Override
+//        protected void onHandleIntent(@Nullable Intent intent) {
+//
+//        }
+//    }
 }
