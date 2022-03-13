@@ -19,7 +19,8 @@ public class AudioTinyPlayer {
     }
 
     private AudioTinyPlayer() {
-
+        if (player == null)
+            player = new MediaPlayer();
     }
 
     public synchronized void playTinyMusic(Context context, int soundRes) {
@@ -28,12 +29,17 @@ public class AudioTinyPlayer {
             return;
 
         try {
-            player = new MediaPlayer();
+            if (player == null)
+                player = new MediaPlayer();
+
             AssetFileDescriptor afd = context.getResources().openRawResourceFd(soundRes);
             if (afd == null) return;
+
             player.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
             afd.close();
+
             player.prepare();
+
             player.start();
             player.setOnCompletionListener(mp -> {
                 mp.release();
@@ -49,9 +55,9 @@ public class AudioTinyPlayer {
             });
 
             player.setLooping(false);
-        } catch (IOException e) {
+        } catch (IOException | IllegalStateException e) {
             e.printStackTrace();
-        }//eof try...catch
+        } //eof try...catch
 
 
     }//eof playTinyMusic

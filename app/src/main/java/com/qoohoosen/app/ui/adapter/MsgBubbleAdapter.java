@@ -44,9 +44,12 @@ public class MsgBubbleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         intent = new Intent(context, ForgroundAudioPlayer.class);
     }
 
-    public void add(MsgBubble message) {
+    public synchronized void add(MsgBubble message) {
         msgBubbleArrayList.add(message);
         notifyItemInserted(msgBubbleArrayList.lastIndexOf(message));
+
+        setSelectionLast();
+
     }
 
     public void clean() {

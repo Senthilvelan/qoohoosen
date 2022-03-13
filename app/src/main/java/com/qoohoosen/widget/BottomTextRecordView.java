@@ -1,7 +1,6 @@
 package com.qoohoosen.widget;
 
 import static com.qoohoosen.utils.Constable.DEBOUNCE_INTERVAL;
-import static com.qoohoosen.utils.Constable.MIN_RECORD_TIME_THRESHOLD;
 import static com.qoohoosen.utils.Constable.TIMER_1000;
 
 import android.animation.Animator;
@@ -409,17 +408,13 @@ public class BottomTextRecordView {
     }
 
 
-    private void stopRecording(RecordingBehaviour recordingBehaviour) {
-
-/*
-        int recordTime = (int) ((System.currentTimeMillis() / (TIMER_1000)) - startRecTime);
-
-        if (recordTime > MIN_RECORD_TIME_THRESHOLD) {
-
-        }*/
+    private synchronized void stopRecording(RecordingBehaviour recordingBehaviour) {
 
 //        if (!isRecordPermissionGranted())
 //            return;
+
+        if (editTextMessage.getVisibility() == View.VISIBLE)
+            return;
 
         stopTrackingAction = true;
         firstX = 0;
@@ -462,6 +457,7 @@ public class BottomTextRecordView {
             layoutEffect2.setVisibility(View.GONE);
             layoutEffect1.setVisibility(View.GONE);
 
+            audioTimer.purge();
             timerTask.cancel();
             delete();
 
@@ -472,49 +468,48 @@ public class BottomTextRecordView {
         } else if (recordingBehaviour == RecordingBehaviour.RELEASED
                 || recordingBehaviour == RecordingBehaviour.LOCK_DONE) {
 
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
+            handler.postDelayed(() -> {
 //                    timeText.clearAnimation();
-                    timeText.setVisibility(View.INVISIBLE);
-                    imageViewMic.setVisibility(View.INVISIBLE);
-                    editTextMessage.setVisibility(View.VISIBLE);
-                    layoutMessage.setVisibility(View.VISIBLE);
+                timeText.setVisibility(View.INVISIBLE);
+                imageViewMic.setVisibility(View.INVISIBLE);
+                editTextMessage.setVisibility(View.VISIBLE);
+                layoutMessage.setVisibility(View.VISIBLE);
 
 //            imageAudioAnimate.setVisibility(View.GONE);
 //            linearLayoutMic.setVisibility(View.INVISIBLE);
-                    UtilsAnimation.slideDown(linearLayoutMic, 400L);
-                    UtilsAnimation.slideDown(imageAudioAnimate, 300L);
+                UtilsAnimation.slideDown(linearLayoutMic, 400L);
+                UtilsAnimation.slideDown(imageAudioAnimate, 300L);
 
 
-                    imageViewEmoji.setVisibility(View.VISIBLE);
+                imageViewEmoji.setVisibility(View.VISIBLE);
 
-                    imageViewStop.setVisibility(View.GONE);
-                    editTextMessage.requestFocus();
-                    layoutEffect2.setVisibility(View.GONE);
-                    layoutEffect1.setVisibility(View.GONE);
+                imageViewStop.setVisibility(View.GONE);
+                editTextMessage.requestFocus();
+                layoutEffect2.setVisibility(View.GONE);
+                layoutEffect1.setVisibility(View.GONE);
 
-                    layoutSlideCancel.setVisibility(View.GONE);
-                    layoutLock.setVisibility(View.GONE);
+                layoutSlideCancel.setVisibility(View.GONE);
+                layoutLock.setVisibility(View.GONE);
 
 
-                    timerTask.cancel();
-                    audioTotalTime = 0;
-                    if (recordingListener != null)
-                        recordingListener.onRecordingCompleted();
+                audioTimer.purge();
+                timerTask.cancel();
+                audioTotalTime = 0;
+                if (recordingListener != null)
+                    recordingListener.onRecordingCompleted();
 
-                }
-            }, 900L);
+            }, 1100L);
         }
     }
 
 //    long startRecTime;
 
-    private void startRecord() {
+    private synchronized void startRecord() {
 //        if (!isRecordPermissionGranted())
 //            return;
 
-//        startRecTime = System.currentTimeMillis();
+        if (editTextMessage.getVisibility() != View.VISIBLE)
+            return;
 
         if (recordingListener != null)
             recordingListener.onRecordingStarted();

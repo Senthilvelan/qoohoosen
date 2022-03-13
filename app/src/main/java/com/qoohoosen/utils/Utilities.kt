@@ -2,6 +2,7 @@ package com.qoohoosen.utils
 
 import android.app.Activity
 import android.content.Context
+import android.util.DisplayMetrics
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import com.google.android.material.snackbar.Snackbar
@@ -36,10 +37,25 @@ object Utilities {
     }
 
     @JvmStatic
-    fun showSnackBar(view: View, msg: String) {
-        val snackbar = Snackbar
-            .make(view, msg, Snackbar.LENGTH_LONG)
+    fun showSnackBar(activity: Activity, view: View, message: String) {
+
+        val snackbar: Snackbar = Snackbar.make(
+            activity.getWindow().getDecorView().getRootView(),
+            message,
+            Snackbar.LENGTH_SHORT
+        )
+        val snackBarView = snackbar.view
+        snackBarView.translationY = -convertDpToPixel(96, activity)
         snackbar.show()
 
+//        val snackbar = Snackbar
+//            .make(view, msg, Snackbar.LENGTH_LONG)
+//        snackbar.show()
+
     }
+
+    fun convertDpToPixel(dp: Int, context: Context): Float {
+        return dp * (context.resources.displayMetrics.densityDpi.toFloat() / DisplayMetrics.DENSITY_DEFAULT)
+    }
+
 }

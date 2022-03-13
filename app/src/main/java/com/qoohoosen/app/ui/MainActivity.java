@@ -9,7 +9,9 @@ import static com.qoohoosen.utils.Constable.RECORD_START;
 import static com.qoohoosen.utils.Constable.TIMER_1000;
 
 import android.Manifest;
+import android.app.IntentService;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.media.AudioFormat;
 import android.media.MediaRecorder;
@@ -182,7 +184,15 @@ public class MainActivity extends AppCompatActivity implements
         if (!isPermissionGranted()) {
             return;
         }
-        playRecordStart();
+        if (recorder == null)
+            startInitRecorder();
+
+        playRecordStatus(RECORD_START);
+
+//        AudioTinyPlayer.getAudioTinyPlayerInstance()
+//                .playTinyMusic(MainActivity.this, RECORD_START);
+        recorder.startRecording();
+
         time = System.currentTimeMillis() / (1000);
     }
 
@@ -197,51 +207,56 @@ public class MainActivity extends AppCompatActivity implements
 //        if (!isPermissionGranted()) {
 //            return;
 //        }
-
+        stopRecord();
         int recordTime = (int) ((System.currentTimeMillis() / (TIMER_1000)) - time);
 
-        if (recordTime > MIN_RECORD_TIME_THRESHOLD && msgBubbleAdapter != null) {
+        if (recordTime > MIN_RECORD_TIME_THRESHOLD) {
 
             int size = msgBubbleAdapter.getItemCount();
 
             msgBubbleAdapter.add(new MsgBubble(size + 1,
                     recordTime, onGoingFile));
-            msgBubbleAdapter.setSelectionLast();
 
-            if (recyclerViewMsgBubble != null)
-                recyclerViewMsgBubble.smoothScrollToPosition(size);
-            checkRecyclerItems();
+//            if (recyclerViewMsgBubble != null)
+//                recyclerViewMsgBubble.smoothScrollToPosition(size);
+//            checkRecyclerItems();
 
-        }
-//        else
-//            Utilities.showSnackBar(recyclerViewMsgBubble, "Not a valid audio !");
+        } else
+            Utilities.showSnackBar(MainActivity.this, recyclerViewMsgBubble,
+                    "Hold more than 3 sec to record valid audio !");
 
-//        playRecordComplete();
-        try {
-            recorder.stopRecording();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        startInitRecorder();
+        playRecordStatus(RECORD_COMPLETED);
+
+    }
+
+    private void stopRecord() {
+
+        new Thread(() -> {
+            try {
+                recorder.stopRecording();
+            } catch (IOException | IllegalStateException e) {
+                e.printStackTrace();
+            }
+            startInitRecorder();
+        }).start();
+
     }
 
 
     @Override
     public void onRecordingCanceled() {
-
-        playRecordCancel();
-
-
+        playRecordStatus(RECORD_CANCEL);
     }
 
     private void startInitRecorder() {
         if (!isPermissionGranted())
             return;
 
-        recorder = OmRecorder.wav(
+        new Thread(() -> recorder = OmRecorder.wav(
                 new PullTransport.Default(mic(),
                         audioChunk -> animateVoice((float) (audioChunk.maxAmplitude() / 200.0))),
-                file());
+                file())).start();
+
     }
 
 
@@ -250,7 +265,7 @@ public class MainActivity extends AppCompatActivity implements
             bottomTextRecordView.animateRecordButton(maxPeak);
     }
 
-    private PullableSource mic() {
+    private synchronized PullableSource mic() {
         return new PullableSource.Default(
                 new AudioRecordConfig.Default(
                         MediaRecorder.AudioSource.MIC, AudioFormat.ENCODING_PCM_16BIT,
@@ -260,7 +275,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @NonNull
-    private File file() {
+    private synchronized File file() {
         File file = new File(getFilesDir(), UUID.randomUUID().toString() + FILE_EXT);
 //        return new File(Environment.getExternalStorageDirectory()
 //                + "/qoohoo",
@@ -277,10 +292,14 @@ public class MainActivity extends AppCompatActivity implements
             for (File dirFile : dirFiles) {
                 String fileOutput = dirFile.toString();
                 if (!fileOutput.isEmpty()) {
-                    MsgBubble msgBubble = new MsgBubble(index, dirFiles.length, fileOutput);
-                    msgBubbleAdapter.add(msgBubble);
-                    debug(fileOutput);
-                    index++;
+                    if (dirFile.length() > 102400) {
+                        MsgBubble msgBubble = new MsgBubble(index, dirFiles.length, fileOutput);
+                        msgBubbleAdapter.add(msgBubble);
+                        debug(fileOutput);
+                        index++;
+                    } else {
+                        dirFile.delete();
+                    }
                 }//eof if
             }//eof for
         }//eof if
@@ -332,58 +351,71 @@ public class MainActivity extends AppCompatActivity implements
 
     }
 
+    private synchronized void playRecordStatus(int statusMusic) {
 
-    private synchronized void playRecordStart() {
+        new Thread(() -> {
+            AudioTinyPlayer.getAudioTinyPlayerInstance()
+                    .playTinyMusic(MainActivity.this, statusMusic);
+//            if (recorder == null) {
+//                startInitRecorder();
+//            } else {
+//
+//                recorder.startRecording();
+//            }
+        }).start();
+    }
 
+
+//    private synchronized void playRecordStart() {
+//
+////        new Thread(new Runnable() {
+////            @Override
+////            public void run() {
+//        if (recorder == null) {
+//            startInitRecorder();
+//        } else {
+//            AudioTinyPlayer.getAudioTinyPlayerInstance()
+//                    .playTinyMusic(MainActivity.this, RECORD_START);
+//            recorder.startRecording();
+//        }
+////            }
+////        }).start();
+//    }
+
+
+//    private synchronized void playRecordComplete() {
+////        new Thread(new Runnable() {
+////            @Override
+////            public void run() {
+//        try {
+//            if (recorder != null) {
+//                AudioTinyPlayer.getAudioTinyPlayerInstance()
+//                        .playTinyMusic(MainActivity.this, RECORD_COMPLETED);
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+////    }
+////        }).start();
+//    }
+
+//    private synchronized void playRecordCancel() {
 //        new Thread(new Runnable() {
 //            @Override
 //            public void run() {
-//                if (recorder == null) {
-//                    startInitRecorder();
-//                } else {
-//                    AudioTinyPlayer.getAudioTinyPlayerInstance()
-//                            .playTinyMusic(MainActivity.this, RECORD_START);
-//                    recorder.startRecording();
+//                try {
+//                    if (recorder != null) {
+//                        AudioTinyPlayer.getAudioTinyPlayerInstance()
+//                                .playTinyMusic(MainActivity.this, RECORD_CANCEL);
+//                        recorder.stopRecording();
+//                        startInitRecorder();
+//                    }
+//                } catch (IOException e) {
+//                    e.printStackTrace();
 //                }
 //            }
 //        }).start();
-    }
-
-
-    private synchronized void playRecordComplete() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    if (recorder != null) {
-                        AudioTinyPlayer.getAudioTinyPlayerInstance()
-                                .playTinyMusic(MainActivity.this, RECORD_COMPLETED);
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
-    }
-
-    private synchronized void playRecordCancel() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-
-                try {
-                    if (recorder != null) {
-                        AudioTinyPlayer.getAudioTinyPlayerInstance()
-                                .playTinyMusic(MainActivity.this, RECORD_CANCEL);
-                        recorder.stopRecording();
-                        startInitRecorder();
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
-    }
+//    }
 
 
 //    private void setupNoiseRecorder() {
@@ -407,4 +439,18 @@ public class MainActivity extends AppCompatActivity implements
 //                ), file()
 //        );
 //    }
+
+
+    public static class PlayTinyIntentService extends IntentService {
+
+
+        public PlayTinyIntentService() {
+            super(PlayTinyIntentService.class.getSimpleName().toString());
+        }
+
+        @Override
+        protected void onHandleIntent(@Nullable Intent intent) {
+
+        }
+    }
 }
