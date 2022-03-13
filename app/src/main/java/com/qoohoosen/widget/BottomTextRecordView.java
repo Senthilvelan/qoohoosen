@@ -1,6 +1,5 @@
 package com.qoohoosen.widget;
 
-import static com.qoohoosen.utils.Constable.DEBOUNCE_INTERVAL;
 import static com.qoohoosen.utils.Constable.TIMER_1000;
 
 import android.animation.Animator;
@@ -226,8 +225,8 @@ public class BottomTextRecordView {
     @SuppressLint("ClickableViewAccessibility")
     private void setupRecording() {
 
-        imageViewSend.animate().scaleX(0f).scaleY(0f)
-                .setDuration(100).setInterpolator(new LinearInterpolator()).start();
+//        imageViewSend.animate().scaleX(0f).scaleY(0f)
+//                .setDuration(100).setInterpolator(new LinearInterpolator()).start();
 
         editTextMessage.addTextChangedListener(new TextWatcher() {
             @Override
@@ -243,15 +242,15 @@ public class BottomTextRecordView {
                 if (s.toString().trim().isEmpty()) {
                     if (imageViewSend.getVisibility() != View.GONE) {
                         imageViewSend.setVisibility(View.GONE);
-                        imageViewSend.animate().scaleX(0f).scaleY(0f)
-                                .setDuration(100).setInterpolator(new LinearInterpolator()).start();
+//                        imageViewSend.animate().scaleX(0f).scaleY(0f)
+//                                .setDuration(100).setInterpolator(new LinearInterpolator()).start();
                     }
 
                 } else {
                     if (imageViewSend.getVisibility() != View.VISIBLE && !isLocked) {
                         imageViewSend.setVisibility(View.VISIBLE);
-                        imageViewSend.animate().scaleX(1f).scaleY(1f)
-                                .setDuration(100).setInterpolator(new LinearInterpolator()).start();
+//                        imageViewSend.animate().scaleX(1f).scaleY(1f)
+//                                .setDuration(100).setInterpolator(new LinearInterpolator()).start();
                     }
                 }
             }
@@ -285,7 +284,7 @@ public class BottomTextRecordView {
                     || motionEvent.getAction() == MotionEvent.ACTION_CANCEL) {
 
                 if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
-                    stopRecording(RecordingBehaviour.RELEASED);
+                    stopRecording(RecordingBehaviour.RELEASED, 1100L);
                 }
 
             } else if (motionEvent.getAction() == MotionEvent.ACTION_MOVE) {
@@ -347,10 +346,15 @@ public class BottomTextRecordView {
             return true;
         });
 
-        imageViewStop.setOnClickListener(new DebounceClickListener(v -> {
+        imageViewStop.setOnClickListener(view -> {
             isLocked = false;
-            stopRecording(RecordingBehaviour.LOCK_DONE);
-        }, DEBOUNCE_INTERVAL));
+            stopRecording(RecordingBehaviour.LOCK_DONE, 900L);
+        });
+
+//        imageViewStop.setOnClickListener(new DebounceClickListener(v -> {
+//            isLocked = false;
+//            stopRecording(RecordingBehaviour.LOCK_DONE);
+//        }, DEBOUNCE_INTERVAL));
     }
 
     private void translateY(float y) {
@@ -398,23 +402,24 @@ public class BottomTextRecordView {
 
     private void locked() {
         stopTrackingAction = true;
-        stopRecording(RecordingBehaviour.LOCKED);
+        stopRecording(RecordingBehaviour.LOCKED, 50L);
         isLocked = true;
     }
 
     private void canceled() {
         stopTrackingAction = true;
-        stopRecording(RecordingBehaviour.CANCELED);
+        stopRecording(RecordingBehaviour.CANCELED, 100L);
     }
 
 
-    private synchronized void stopRecording(RecordingBehaviour recordingBehaviour) {
+    private synchronized void stopRecording(RecordingBehaviour recordingBehaviour, long duration) {
 
 //        if (!isRecordPermissionGranted())
 //            return;
 
         if (editTextMessage.getVisibility() == View.VISIBLE)
             return;
+
 
         stopTrackingAction = true;
         firstX = 0;
@@ -426,11 +431,11 @@ public class BottomTextRecordView {
 
         imageViewAudio.animate().scaleX(1f).scaleY(1f).translationX(0).translationY(0)
                 .setDuration(100).setInterpolator(new LinearInterpolator()).start();
+
         layoutSlideCancel.setTranslationX(0);
 
         shimmerLayoutSlide.stopShimmerAnimation();
         layoutSlideCancel.setVisibility(View.GONE);
-
 
         layoutLock.setVisibility(View.GONE);
         layoutLock.setTranslationY(0);
@@ -441,42 +446,41 @@ public class BottomTextRecordView {
             return;
         }
 
-        if (recordingBehaviour == RecordingBehaviour.LOCKED) {
-            imageViewStop.setVisibility(View.VISIBLE);
-
-            if (recordingListener != null)
-                recordingListener.onRecordingLocked();
-
-        } else if (recordingBehaviour == RecordingBehaviour.CANCELED) {
+        handler.postDelayed(() -> {
 
 
-//            timeText.clearAnimation();
-            timeText.setVisibility(View.INVISIBLE);
-            imageViewMic.setVisibility(View.INVISIBLE);
-            imageViewStop.setVisibility(View.GONE);
-            layoutEffect2.setVisibility(View.GONE);
-            layoutEffect1.setVisibility(View.GONE);
+            if (recordingBehaviour == RecordingBehaviour.LOCKED) {
+                imageViewStop.setVisibility(View.VISIBLE);
 
-            audioTimer.purge();
-            timerTask.cancel();
-            delete();
+                if (recordingListener != null)
+                    recordingListener.onRecordingLocked();
 
-            if (recordingListener != null)
-                recordingListener.onRecordingCanceled();
+            } else if (recordingBehaviour == RecordingBehaviour.CANCELED) {
 
 
-        } else if (recordingBehaviour == RecordingBehaviour.RELEASED
-                || recordingBehaviour == RecordingBehaviour.LOCK_DONE) {
+                timeText.setVisibility(View.INVISIBLE);
+                imageViewMic.setVisibility(View.INVISIBLE);
+                imageViewStop.setVisibility(View.GONE);
+                layoutEffect2.setVisibility(View.GONE);
+                layoutEffect1.setVisibility(View.GONE);
 
-            handler.postDelayed(() -> {
-//                    timeText.clearAnimation();
+                audioTimer.purge();
+                timerTask.cancel();
+                delete();
+
+                if (recordingListener != null)
+                    recordingListener.onRecordingCanceled();
+
+
+            } else if (recordingBehaviour == RecordingBehaviour.RELEASED
+                    || recordingBehaviour == RecordingBehaviour.LOCK_DONE) {
+
+
                 timeText.setVisibility(View.INVISIBLE);
                 imageViewMic.setVisibility(View.INVISIBLE);
                 editTextMessage.setVisibility(View.VISIBLE);
                 layoutMessage.setVisibility(View.VISIBLE);
 
-//            imageAudioAnimate.setVisibility(View.GONE);
-//            linearLayoutMic.setVisibility(View.INVISIBLE);
                 UtilsAnimation.slideDown(linearLayoutMic, 400L);
                 UtilsAnimation.slideDown(imageAudioAnimate, 300L);
 
@@ -495,11 +499,16 @@ public class BottomTextRecordView {
                 audioTimer.purge();
                 timerTask.cancel();
                 audioTotalTime = 0;
+
+
+//                if (editTextMessage.getVisibility() == View.VISIBLE)
+//                    return;
                 if (recordingListener != null)
                     recordingListener.onRecordingCompleted();
 
-            }, 1100L);
-        }
+
+            }
+        }, duration);
     }
 
 //    long startRecTime;
@@ -511,8 +520,6 @@ public class BottomTextRecordView {
         if (editTextMessage.getVisibility() != View.VISIBLE)
             return;
 
-        if (recordingListener != null)
-            recordingListener.onRecordingStarted();
 
         stopTrackingAction = false;
 
@@ -562,6 +569,9 @@ public class BottomTextRecordView {
 
         audioTotalTime = 0;
         audioTimer.schedule(timerTask, 0, TIMER_1000);
+
+        if (recordingListener != null)
+            recordingListener.onRecordingStarted();
     }
 
     private void delete() {

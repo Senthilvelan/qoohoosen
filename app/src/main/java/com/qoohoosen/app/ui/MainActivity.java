@@ -11,7 +11,6 @@ import static com.qoohoosen.utils.Constable.TIMER_1000;
 import android.Manifest;
 import android.app.IntentService;
 import android.content.Intent;
-import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.media.AudioFormat;
 import android.media.MediaRecorder;
@@ -69,7 +68,7 @@ public class MainActivity extends AppCompatActivity implements
     private MsgBubbleAdapter msgBubbleAdapter;
 
     //vars
-    private long time;
+    private long time, stopTime;
     private Recorder recorder;
     private static String onGoingFile;
 
@@ -180,10 +179,21 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onRecordingStarted() {
-        if (!isPermissionGranted()) {
-            return;
+    public synchronized void onRecordingStarted() {
+        long currentTime = System.currentTimeMillis();
+
+        if (time != 0) {
+            int timeDiff = (int) (currentTime - time);
+            if (timeDiff <= 900)
+                return;
         }
+
+        debug("onRecordingStarted currentTime : " + currentTime);
+
+
+//        if (!isPermissionGranted()) {
+//            return;
+//        }
         if (recorder == null)
             startInitRecorder();
 
@@ -191,24 +201,33 @@ public class MainActivity extends AppCompatActivity implements
 
 //        AudioTinyPlayer.getAudioTinyPlayerInstance()
 //                .playTinyMusic(MainActivity.this, RECORD_START);
+        time = currentTime;
         recorder.startRecording();
 
-        time = System.currentTimeMillis() / (1000);
     }
 
 
     @Override
-    public void onRecordingLocked() {
+    public synchronized void onRecordingLocked() {
         debug("locked");
     }
 
     @Override
     public synchronized void onRecordingCompleted() {
+        long currentTime = System.currentTimeMillis();
+        if (stopTime != 0) {
+            int timeDiff = (int) (currentTime - stopTime);
+            if (timeDiff <= 900)
+                return;
+        }
+
 //        if (!isPermissionGranted()) {
 //            return;
 //        }
+        debug("onRecordingCompleted");
+
         stopRecord();
-        int recordTime = (int) ((System.currentTimeMillis() / (TIMER_1000)) - time);
+        int recordTime = (int) ((currentTime / (TIMER_1000)) - (time / (TIMER_1000)));
 
         if (recordTime > MIN_RECORD_TIME_THRESHOLD) {
 
@@ -220,16 +239,18 @@ public class MainActivity extends AppCompatActivity implements
             if (recyclerViewMsgBubble != null)
                 recyclerViewMsgBubble.smoothScrollToPosition(size);
 //            checkRecyclerItems();
+            playRecordStatus(RECORD_COMPLETED);
 
-        } else
-            Utilities.showSnackBar(MainActivity.this, recyclerViewMsgBubble,
-                    "Hold more than 3 sec to record valid audio !");
+        }
+        //else
+//            Utilities.showSnackBar(MainActivity.this, recyclerViewMsgBubble,
+//                    "Hold more than 3 sec to record valid audio !");
 
-        playRecordStatus(RECORD_COMPLETED);
+        stopTime = currentTime;
 
     }
 
-    private void stopRecord() {
+    private synchronized void stopRecord() {
 
         new Thread(() -> {
             try {
@@ -441,16 +462,16 @@ public class MainActivity extends AppCompatActivity implements
 //    }
 
 
-//    public static class PlayTinyIntentService extends IntentService {
-//
-//
-//        public PlayTinyIntentService() {
-//            super(PlayTinyIntentService.class.getSimpleName().toString());
-//        }
-//
-//        @Override
-//        protected void onHandleIntent(@Nullable Intent intent) {
-//
-//        }
-//    }
+    public static class PlayTinyIntentService extends IntentService {
+
+
+        public PlayTinyIntentService() {
+            super(PlayTinyIntentService.class.getSimpleName().toString());
+        }
+
+        @Override
+        protected void onHandleIntent(@Nullable Intent intent) {
+
+        }
+    }
 }
