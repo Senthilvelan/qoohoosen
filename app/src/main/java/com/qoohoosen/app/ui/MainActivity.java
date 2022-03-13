@@ -179,7 +179,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public synchronized void onRecordingStarted() {
+    public  void onRecordingStarted() {
         long currentTime = System.currentTimeMillis();
 
         if (time != 0) {
@@ -208,12 +208,12 @@ public class MainActivity extends AppCompatActivity implements
 
 
     @Override
-    public synchronized void onRecordingLocked() {
+    public  void onRecordingLocked() {
         debug("locked");
     }
 
     @Override
-    public synchronized void onRecordingCompleted() {
+    public  void onRecordingCompleted() {
         long currentTime = System.currentTimeMillis();
         if (stopTime != 0) {
             int timeDiff = (int) (currentTime - stopTime);
@@ -250,7 +250,7 @@ public class MainActivity extends AppCompatActivity implements
 
     }
 
-    private synchronized void stopRecord() {
+    private  void stopRecord() {
 
         new Thread(() -> {
             try {
@@ -286,7 +286,7 @@ public class MainActivity extends AppCompatActivity implements
             bottomTextRecordView.animateRecordButton(maxPeak);
     }
 
-    private synchronized PullableSource mic() {
+    private  PullableSource mic() {
         return new PullableSource.Default(
                 new AudioRecordConfig.Default(
                         MediaRecorder.AudioSource.MIC, AudioFormat.ENCODING_PCM_16BIT,
@@ -296,7 +296,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @NonNull
-    private synchronized File file() {
+    private  File file() {
         File file = new File(getFilesDir(), UUID.randomUUID().toString() + FILE_EXT);
 //        return new File(Environment.getExternalStorageDirectory()
 //                + "/qoohoo",
@@ -372,7 +372,7 @@ public class MainActivity extends AppCompatActivity implements
 
     }
 
-    private synchronized void playRecordStatus(int statusMusic) {
+    private  void playRecordStatus(int statusMusic) {
 
         new Thread(() -> {
             AudioTinyPlayer.getAudioTinyPlayerInstance()

@@ -44,14 +44,14 @@ public class BottomTextRecordView {
 
     //Widgets
     private LinearLayout viewContainer;
-    private View imageViewAudio;
+    private ImageView imageViewAudio;
     private View imageViewLockArrow;
     private View imageViewLock;
     private View imageViewMic;
     private View dustin;
     private View dustin_cover;
-    private View imageViewStop;
-    private View imageViewSend;
+    private ImageView imageViewStop;
+    private ImageView imageViewSend;
     private View layoutDustin;
     private View layoutMessage;
     private View imageViewEmoji;
@@ -67,9 +67,9 @@ public class BottomTextRecordView {
     private TextView textViewSlide;
     private ShimmerLayout shimmerLayoutSlide;
 
-    private ImageView stop;
+    //    private ImageView stop;
     private ImageView audio;
-    private ImageView send;
+//    private ImageView send;
 
     //Anims
 //    private Animation animBlink;
@@ -132,9 +132,9 @@ public class BottomTextRecordView {
         imageViewEmoji = view.findViewById(R.id.imageViewEmoji);
         editTextMessage = view.findViewById(R.id.editTextMessage);
 
-        send = view.findViewById(R.id.imageSend);
-        stop = view.findViewById(R.id.imageStop);
-        audio = view.findViewById(R.id.imageAudio);
+//        send = view.findViewById(R.id.imageSend);
+//        stop = view.findViewById(R.id.imageStop);
+//        audio = view.findViewById(R.id.imageAudio);
 
         imageViewAudio = view.findViewById(R.id.imageViewAudio);
         imageViewStop = view.findViewById(R.id.imageViewStop);
@@ -194,13 +194,13 @@ public class BottomTextRecordView {
         audio.setImageResource(imageResource);
     }
 
-    public void setStopButtonImage(int imageResource) {
-        stop.setImageResource(imageResource);
-    }
+//    public void setStopButtonImage(int imageResource) {
+//        stop.setImageResource(imageResource);
+//    }
 
-    public void setSendButtonImage(int imageResource) {
-        send.setImageResource(imageResource);
-    }
+//    public void setSendButtonImage(int imageResource) {
+//        send.setImageResource(imageResource);
+//    }
 
     public RecordingListener getRecordingListener() {
         return recordingListener;
@@ -733,7 +733,8 @@ public class BottomTextRecordView {
 
 
     public void animateRecordButton(final float maxPeak) {
-        imageAudioAnimate.animate().scaleX(1 + maxPeak).scaleY(1 + maxPeak).setDuration(40L).start();
+//        if (imageAudioAnimate != null && imageAudioAnimate.getVisibility() == View.VISIBLE)
+//            imageAudioAnimate.animate().scaleX(1 + maxPeak).scaleY(1 + maxPeak).setDuration(40L).start();
     }
 
     private boolean isRecordPermissionGranted() {
