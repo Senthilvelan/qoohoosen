@@ -217,8 +217,8 @@ public class MainActivity extends AppCompatActivity implements
             msgBubbleAdapter.add(new MsgBubble(size + 1,
                     recordTime, onGoingFile));
 
-//            if (recyclerViewMsgBubble != null)
-//                recyclerViewMsgBubble.smoothScrollToPosition(size);
+            if (recyclerViewMsgBubble != null)
+                recyclerViewMsgBubble.smoothScrollToPosition(size);
 //            checkRecyclerItems();
 
         } else
