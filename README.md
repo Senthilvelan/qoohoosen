@@ -15,7 +15,6 @@ Its possible to capture with background and can omit the silence using this lib
 ### The app needs only record mic permission and storage permission not needed,since app make use of internal memory supports upto 200 Mb for the demo purpose.permission.
 App works fine for the demo, which takes care the quality of the sound, UX, UI, theme, code organization, and next level for optimization, adding waves (waves added ,need to fix the memory issue)
 
-###awaiting for the feedback
 
 #### For better UX - Moved the play/pause button to right side for easily access by thumb (Whole recycler Item touch is not so good)
 #### Added audio waves when its playing, with animation, made pause button brighter than play button for easy identification for playing item
