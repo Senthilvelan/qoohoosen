@@ -1,7 +1,6 @@
 package com.qoohoosen.app.ui.adapter;
 
 import android.content.Context;
-import android.content.Intent;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,7 +16,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.github.scrobot.audiovisualizer.SoundWaveView;
 import com.qoohoosen.app.R;
 import com.qoohoosen.app.ui.adapter.pojo.MsgBubble;
-import com.qoohoosen.service.ForgroundAudioPlayer;
 import com.qoohoosen.utils.UtilsAnimation;
 import com.qoohoosen.widget.DebounceClickListener;
 
@@ -37,6 +35,8 @@ public class MsgBubbleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private static String contentPlaying = "";
     private int selectedItemPos = -1;
     private int lastItemSelectedPos = -1;
+    private SoundWaveView lastSeletedView = null;
+
 //    private Intent intent;
 
     public MsgBubbleAdapter(Context context) {
@@ -48,9 +48,7 @@ public class MsgBubbleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     public synchronized void add(MsgBubble message) {
         msgBubbleArrayList.add(message);
         notifyItemInserted(msgBubbleArrayList.lastIndexOf(message));
-
         setSelectionLast();
-
     }
 
     public void clean() {
@@ -119,7 +117,6 @@ public class MsgBubbleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
         public void bind(MsgBubble msgBubble, final int adapterPosition) {
 
-
             if (msgBubble == null)
                 return;
 
@@ -150,12 +147,16 @@ public class MsgBubbleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
                 if (lastItemSelectedPos == -1) {
                     lastItemSelectedPos = selectedItemPos;
+                    lastSeletedView = soundWaveView;
                 } else {
-                    notifyItemChanged(lastItemSelectedPos);
+                    removeUpdateWave(lastSeletedView);
+//                    notifyItemChanged(lastItemSelectedPos);
                     lastItemSelectedPos = selectedItemPos;
+                    lastSeletedView = soundWaveView;
                 }
-                notifyItemChanged(selectedItemPos);
 
+                updateWave(soundWaveView, msgBubble.path);
+//                notifyItemChanged(selectedItemPos);
 
             }, 50L));
 
@@ -166,8 +167,7 @@ public class MsgBubbleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                              View view, String path, int adapterPosition) {
         contentPlaying = "";
         ((ImageView) view).setImageResource(com.github.scrobot.audiovisualizer.R.drawable.ic_play);
-        removeUpdateWave(viewGroup, soundWaveView,
-                view, path, adapterPosition);
+        removeUpdateWave(soundWaveView);
         /*
         Enable when service needs
         //Notification foreground
@@ -176,9 +176,7 @@ public class MsgBubbleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     }//eof defaultItem
 
-
-    public synchronized void removeUpdateWave(ViewGroup viewGroup, SoundWaveView soundWaveView,
-                                              View view, String path, int adapterPosition) {
+    public synchronized void removeUpdateWave(SoundWaveView soundWaveView) {
 
         try {
             soundWaveView.clearMediaplayer();
@@ -195,14 +193,15 @@ public class MsgBubbleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             contentPlaying = path;
             ((ImageView) view)
                     .setImageResource(com.github.scrobot.audiovisualizer.R.drawable.ic_pause);
-            updateWave(viewGroup, soundWaveView, path);
+            updateWave(soundWaveView, path);
             /*//Enable when service needs
                         context.startService(intent
                                 .putExtra(INTENT_PATH_AUDIO, contentPlaying));*/
         }//eof if
     }//eof selectedItem
 
-    public void updateWave(ViewGroup parent, SoundWaveView view, String path) {
+
+    public void updateWave(SoundWaveView view, String path) {
         try {
             Uri uri = Uri.fromFile(new File(path));
             if (view != null) {
