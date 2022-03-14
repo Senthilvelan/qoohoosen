@@ -10,6 +10,8 @@ import java.io.*
 
 
 object Utilities {
+
+    //To hide the keypad when user tap on mic
     @JvmStatic
     fun hideKeyPad(context: Context, view: View) {
         try {
@@ -21,6 +23,7 @@ object Utilities {
     }
 
 
+    //To convert the file to byte array
     fun fileToBytes(file: File): ByteArray? {
         val size = file.length() as Int
         val bytes = ByteArray(size)
@@ -47,10 +50,6 @@ object Utilities {
         val snackBarView = snackbar.view
         snackBarView.translationY = -convertDpToPixel(96, activity)
         snackbar.show()
-
-//        val snackbar = Snackbar
-//            .make(view, msg, Snackbar.LENGTH_LONG)
-//        snackbar.show()
 
     }
 

@@ -179,7 +179,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public  void onRecordingStarted() {
+    public void onRecordingStarted() {
         long currentTime = System.currentTimeMillis();
 
         if (time != 0) {
@@ -188,19 +188,11 @@ public class MainActivity extends AppCompatActivity implements
                 return;
         }
 
-        debug("onRecordingStarted currentTime : " + currentTime);
-
-
-//        if (!isPermissionGranted()) {
-//            return;
-//        }
         if (recorder == null)
             startInitRecorder();
 
         playRecordStatus(RECORD_START);
 
-//        AudioTinyPlayer.getAudioTinyPlayerInstance()
-//                .playTinyMusic(MainActivity.this, RECORD_START);
         time = currentTime;
         recorder.startRecording();
 
@@ -208,12 +200,12 @@ public class MainActivity extends AppCompatActivity implements
 
 
     @Override
-    public  void onRecordingLocked() {
-        debug("locked");
+    public void onRecordingLocked() {
+//        debug("locked");
     }
 
     @Override
-    public  void onRecordingCompleted() {
+    public void onRecordingCompleted() {
         long currentTime = System.currentTimeMillis();
         if (stopTime != 0) {
             int timeDiff = (int) (currentTime - stopTime);
@@ -224,7 +216,7 @@ public class MainActivity extends AppCompatActivity implements
 //        if (!isPermissionGranted()) {
 //            return;
 //        }
-        debug("onRecordingCompleted");
+//        debug("onRecordingCompleted");
 
         stopRecord();
         int recordTime = (int) ((currentTime / (TIMER_1000)) - (time / (TIMER_1000)));
@@ -238,19 +230,18 @@ public class MainActivity extends AppCompatActivity implements
 
             if (recyclerViewMsgBubble != null)
                 recyclerViewMsgBubble.smoothScrollToPosition(size);
-//            checkRecyclerItems();
+            checkRecyclerItems();
             playRecordStatus(RECORD_COMPLETED);
 
-        }
-        //else
-//            Utilities.showSnackBar(MainActivity.this, recyclerViewMsgBubble,
-//                    "Hold more than 3 sec to record valid audio !");
+        } else
+            Utilities.showSnackBar(MainActivity.this, recyclerViewMsgBubble,
+                    "Long press and hold the mic, to record valid audio !");
 
         stopTime = currentTime;
 
     }
 
-    private  void stopRecord() {
+    private void stopRecord() {
 
         new Thread(() -> {
             try {
@@ -284,19 +275,19 @@ public class MainActivity extends AppCompatActivity implements
     private void animateVoice(final float maxPeak) {
         if (bottomTextRecordView != null)
             bottomTextRecordView.animateRecordButton(maxPeak);
-    }
+    }//eof animateVoice
 
-    private  PullableSource mic() {
+    private PullableSource mic() {
         return new PullableSource.Default(
                 new AudioRecordConfig.Default(
                         MediaRecorder.AudioSource.MIC, AudioFormat.ENCODING_PCM_16BIT,
                         AudioFormat.CHANNEL_IN_MONO, FREQUENCY
                 )
         );
-    }
+    }//eof mic
 
     @NonNull
-    private  File file() {
+    private File file() {
         File file = new File(getFilesDir(), UUID.randomUUID().toString() + FILE_EXT);
 //        return new File(Environment.getExternalStorageDirectory()
 //                + "/qoohoo",
@@ -316,7 +307,7 @@ public class MainActivity extends AppCompatActivity implements
                     if (dirFile.length() > 102400) {
                         MsgBubble msgBubble = new MsgBubble(index, dirFiles.length, fileOutput);
                         msgBubbleAdapter.add(msgBubble);
-                        debug(fileOutput);
+//                        debug(fileOutput);
                         index++;
                     } else {
                         dirFile.delete();
@@ -372,7 +363,7 @@ public class MainActivity extends AppCompatActivity implements
 
     }
 
-    private  void playRecordStatus(int statusMusic) {
+    private void playRecordStatus(int statusMusic) {
 
         new Thread(() -> {
             AudioTinyPlayer.getAudioTinyPlayerInstance()
@@ -387,58 +378,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
 
-//    private synchronized void playRecordStart() {
-//
-////        new Thread(new Runnable() {
-////            @Override
-////            public void run() {
-//        if (recorder == null) {
-//            startInitRecorder();
-//        } else {
-//            AudioTinyPlayer.getAudioTinyPlayerInstance()
-//                    .playTinyMusic(MainActivity.this, RECORD_START);
-//            recorder.startRecording();
-//        }
-////            }
-////        }).start();
-//    }
-
-
-//    private synchronized void playRecordComplete() {
-////        new Thread(new Runnable() {
-////            @Override
-////            public void run() {
-//        try {
-//            if (recorder != null) {
-//                AudioTinyPlayer.getAudioTinyPlayerInstance()
-//                        .playTinyMusic(MainActivity.this, RECORD_COMPLETED);
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-////    }
-////        }).start();
-//    }
-
-//    private synchronized void playRecordCancel() {
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                try {
-//                    if (recorder != null) {
-//                        AudioTinyPlayer.getAudioTinyPlayerInstance()
-//                                .playTinyMusic(MainActivity.this, RECORD_CANCEL);
-//                        recorder.stopRecording();
-//                        startInitRecorder();
-//                    }
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        }).start();
-//    }
-
-
+    //avoid to record silent
 //    private void setupNoiseRecorder() {
 //        recorder = OmRecorder.wav(
 //                new PullTransport.Noise(mic(),
@@ -452,9 +392,6 @@ public class MainActivity extends AppCompatActivity implements
 //                        new Recorder.OnSilenceListener() {
 //                            @Override
 //                            public void onSilence(long silenceTime) {
-//                                Log.e("silenceTime", String.valueOf(silenceTime));
-//                                Toast.makeText(MainActivity.this, "silence of " + silenceTime + " detected",
-//                                        Toast.LENGTH_SHORT).show();
 //                            }
 //                        }, 200
 //                ), file()
@@ -462,7 +399,8 @@ public class MainActivity extends AppCompatActivity implements
 //    }
 
 
-    public static class PlayTinyIntentService extends IntentService {
+    //IntentService : Not in use, used Thread
+/*    public static class PlayTinyIntentService extends IntentService {
 
 
         public PlayTinyIntentService() {
@@ -473,5 +411,5 @@ public class MainActivity extends AppCompatActivity implements
         protected void onHandleIntent(@Nullable Intent intent) {
 
         }
-    }
+    }*/
 }

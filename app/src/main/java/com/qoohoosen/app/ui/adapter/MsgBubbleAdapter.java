@@ -37,11 +37,12 @@ public class MsgBubbleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private static String contentPlaying = "";
     private int selectedItemPos = -1;
     private int lastItemSelectedPos = -1;
-    private Intent intent;
+//    private Intent intent;
 
     public MsgBubbleAdapter(Context context) {
         this.context = context;
-        intent = new Intent(context, ForgroundAudioPlayer.class);
+        //Enable when use bg audio service
+//        intent = new Intent(context, ForgroundAudioPlayer.class);
     }
 
     public synchronized void add(MsgBubble message) {

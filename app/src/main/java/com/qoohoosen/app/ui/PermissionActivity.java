@@ -1,6 +1,7 @@
 package com.qoohoosen.app.ui;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -8,6 +9,8 @@ import android.provider.Settings;
 import android.util.Log;
 import android.widget.TextView;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -40,10 +43,7 @@ public class PermissionActivity extends AppCompatActivity {
                 .withListener(new PermissionListener() {
                     @Override
                     public void onPermissionGranted(PermissionGrantedResponse response) {
-                        Intent intent = new Intent(PermissionActivity.this,
-                                MainActivity.class);
-                        startActivity(intent);
-                        finish();
+                        gotoMain();
                     }
 
                     @Override
@@ -81,14 +81,30 @@ public class PermissionActivity extends AppCompatActivity {
             Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
             Uri uri = Uri.fromParts("package", getPackageName(), null);
             intent.setData(uri);
-            startActivityForResult(intent, 101);
+            permissionActivityResultLauncher.launch(intent);
         } catch (Exception e) {
             debug(e.toString());
         }
 
     }
 
+    ActivityResultLauncher<Intent> permissionActivityResultLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == Activity.RESULT_OK) {
+                    Intent data = result.getData();
+                    gotoMain();
+                }
+            });
+
     private void debug(String log) {
         Log.d(TAG, log);
+    }
+
+    private void gotoMain() {
+        Intent intent = new Intent(PermissionActivity.this,
+                MainActivity.class);
+        startActivity(intent);
+        finish();
     }
 }
