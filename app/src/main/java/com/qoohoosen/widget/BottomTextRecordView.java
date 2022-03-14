@@ -697,7 +697,7 @@ public class BottomTextRecordView {
 
 
     public void animateRecordButton(final float maxPeak) {
-        //Consume heavy memory on UI thread-figureout
+        //Consume memory on UI thread-figureout
 //        if (imageAudioAnimate != null && imageAudioAnimate.getVisibility() == View.VISIBLE)
 //            imageAudioAnimate.animate().scaleX(1 + maxPeak).scaleY(1 + maxPeak).setDuration(40L).start();
     }

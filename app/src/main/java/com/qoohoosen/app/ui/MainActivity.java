@@ -9,6 +9,7 @@ import static com.qoohoosen.utils.Constable.RECORD_START;
 import static com.qoohoosen.utils.Constable.TIMER_1000;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.IntentService;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -21,6 +22,8 @@ import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -356,12 +359,20 @@ public class MainActivity extends AppCompatActivity implements
             Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
             Uri uri = Uri.fromParts("package", getPackageName(), null);
             intent.setData(uri);
-            startActivityForResult(intent, 101);
+            permissionActivityResultLauncher.launch(intent);
         } catch (Exception e) {
             debug(e.toString());
         }
 
     }
+
+    ActivityResultLauncher<Intent> permissionActivityResultLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == Activity.RESULT_OK) {
+                    Intent data = result.getData();
+                }
+            });
 
     private void playRecordStatus(int statusMusic) {
 

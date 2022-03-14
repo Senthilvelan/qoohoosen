@@ -23,7 +23,7 @@ object Utilities {
     }
 
 
-    //To convert the file to byte array
+    //To convert the file to byte array (Not in use)
     fun fileToBytes(file: File): ByteArray? {
         val size = file.length() as Int
         val bytes = ByteArray(size)
