@@ -267,18 +267,21 @@ public class MainActivity extends AppCompatActivity implements
         if (!isPermissionGranted())
             return;
 
-        new Thread(() -> recorder = OmRecorder.wav(
-                new PullTransport.Default(mic(),
-                        audioChunk -> animateVoice((float) (audioChunk.maxAmplitude() / 200.0))),
-                file())).start();
+        new Thread(() -> recorder
+                = OmRecorder.wav(new PullTransport.Default(mic()), file())).start();
+
+//        new Thread(() -> recorder = OmRecorder.wav(
+//                new PullTransport.Default(mic(),
+//                        audioChunk -> animateVoice((float) (audioChunk.maxAmplitude() / 200.0))),
+//                file())).start();
 
     }
 
 
-    private void animateVoice(final float maxPeak) {
-        if (bottomTextRecordView != null)
-            bottomTextRecordView.animateRecordButton(maxPeak);
-    }//eof animateVoice
+//    private void animateVoice(final float maxPeak) {
+////        if (bottomTextRecordView != null)
+////            bottomTextRecordView.animateRecordButton(maxPeak);
+//    }//eof animateVoice
 
     private PullableSource mic() {
         return new PullableSource.Default(
